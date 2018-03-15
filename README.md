@@ -2,7 +2,7 @@
 Draws a neighborhood graph of a given [SpecIF](http://specif.de) resource. Input is a SpecIF data-set plus some options, output is a HTML-5 canvas appended to a specified DOM element.
 
 ## Example
-... taken from the show-case integrated specification of a mechatronic system ['Dimmer'](http://se.reqif.net/apps/reader.html#pid/ACP-59c8a7730000bca80137509a49b1218b/sid/SP-59c8a7730000bca80137509a49b1218b/relations/MEl-5a9ce0310000bca801378176dc4744e8):
+... taken from the show-case: Integrated Specification of a Mechatronic System ['Dimmer'](http://se.reqif.net/apps/reader.html#pid/ACP-59c8a7730000bca80137509a49b1218b/sid/SP-59c8a7730000bca80137509a49b1218b/relations/MEl-5a9ce0310000bca801378176dc4744e8):
 ![example](example.PNG)
 
 ## Verwendete Librarys 
