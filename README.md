@@ -17,4 +17,4 @@ Draws a neighborhood graph of a given [SpecIF](http://specif.de) resource. Input
 4.	SpecIFData: Liefert ein Beispiel einer SpecIF-JSON Datei als return-Wert.
 
 ## Acknowledgements
-This work has been sponsored by [adesso AG](http://adesso.de), Berlin.
+Many thanks to author marcusbaetz. This work has also been sponsored by [adesso AG](http://adesso.de), Berlin.
