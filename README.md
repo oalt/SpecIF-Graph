@@ -2,8 +2,9 @@
 Draws a neighborhood graph of a given [SpecIF](http://specif.de) resource. Input is a SpecIF data-set plus some options, output is a HTML-5 canvas appended to a specified DOM element.
 
 ## Verwendete Librarys 
-1.	Requirejs: Nicht unbedingt notwendig.
-2.	Vis.js: Die Library zur Darstellung der Graphen.
+1. Requirejs: Nicht unbedingt notwendig.
+2. Jquery: Nicht unbedingt notwendig.
+3. Vis.js: Die Library zur Darstellung der Graphen.
 
 ## Javascript-Files
 1.	Config: Hier werden einfach für Requirejs die Pfade zu den anderen Dateien als Alias gespeichert.
