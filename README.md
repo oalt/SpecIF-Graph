@@ -1,6 +1,10 @@
 # SpecIF-Graph
 Draws a neighborhood graph of a given [SpecIF](http://specif.de) resource. Input is a SpecIF data-set plus some options, output is a HTML-5 canvas appended to a specified DOM element.
 
+## Example
+... taken from the show-case integrated specification of a mechatronic system ['Dimmer'](http://se.reqif.net/apps/reader.html#pid/ACP-59c8a7730000bca80137509a49b1218b/sid/SP-59c8a7730000bca80137509a49b1218b/document/Fld-59c8a7730000bca80137509a49b1218b-info):
+![example](example.PNG)
+
 ## Verwendete Librarys 
 1. Requirejs: Nicht unbedingt notwendig.
 2. Jquery: Nicht unbedingt notwendig.
