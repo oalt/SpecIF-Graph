@@ -5,6 +5,7 @@
 define([ "vis" ], function (vis) {
 
     function init(specifData,opts) {
+			console.debug('init input',specifData,opts);
 
 			// Check for missing options:
 			if ( !opts
@@ -15,7 +16,7 @@ define([ "vis" ], function (vis) {
 			// All required parameters are available, so we can begin:
 			let index = opts.index || 0;
             let relations = getAllStatementsOf( specifData.resources[index] );
-			console.debug('init',relations);
+			console.debug('init relations',relations);
             //if there are no relations do not create a graph:
             if ( !relations ) return;
 
@@ -53,7 +54,6 @@ define([ "vis" ], function (vis) {
                     shape: "box"
                 },
                 edges: {
-
                     font: {
                         align: "bottom"
                     },
@@ -157,19 +157,18 @@ define([ "vis" ], function (vis) {
          * @param str The Stringt that hast to be wrapped
          * @returns {string} the wrapped string
          */
-        function wrapText(str) {
-
+        function wrapText(str,maxWidth) {
             str =decode(str);
-            let maxWidth = 20;
-            let newLineStr = "\n";
-            res = '';
-            if (str.length <= maxWidth)return str;
+            let newLine = "\n",
+				out = '',
+				found = false;
+            if (str.length < maxWidth+1) return str;
             do {
                 found = false;
                 // Inserts new line at first whitespace of the line
-                for (i = maxWidth - 1; i >= maxWidth - 5; i--) {
+                for ( var i = maxWidth-1; i > maxWidth-6; i--) {
                     if (testWhite(str.charAt(i))) {
-                        res = res + [str.slice(0, i), newLineStr].join('');
+                        out = out + [str.slice(0, i), newLine].join('');
                         str = str.slice(i + 1);
                         found = true;
                         break
@@ -177,11 +176,11 @@ define([ "vis" ], function (vis) {
                 };
                 // Inserts new line at maxWidth position, the word is too long to wrap
                 if (!found) {
-                    res += [str.slice(0, maxWidth) + "-", newLineStr].join('');
+                    out += [str.slice(0, maxWidth) + "-", newLine].join('');
                     str = str.slice(maxWidth)
                 }
             } while (str.length >= maxWidth);
-            return res + str
+            return out + str
         }
 
         /**
@@ -256,7 +255,7 @@ define([ "vis" ], function (vis) {
             nodesData.push(
                 {
                     id: 0,
-                    label: wrapText(entry),
+                    label: wrapText(entry,20),
                     x: 0,
                     y: 0,
                     shape: "circle"
@@ -355,7 +354,7 @@ define([ "vis" ], function (vis) {
         function pushNodeAndEdge(id, sourceID, targetID, nodesData, edgeData, entry, value, pos) {
             nodesData.push({
                 id: id,
-                label: wrapText(entry),
+                label: wrapText(entry,20),
                 x: pos.x,
                 y: pos.y,
                 shape: entry === "" ? "circle" : "box"
@@ -400,11 +399,13 @@ define([ "vis" ], function (vis) {
          */
         function getResourceTitle(res) {
 			if( res.properties ) {
-				for (var n = 0; n < res.properties.length; n++)
+				for (var n=0; n<res.properties.length; n++)
 					if (opts.titleProperties.includes(res.properties[n].title))
-						return cleanStringFromForbiddenChars(res.properties[n].value)
+						return res.properties[n].value
+//						return cleanStringFromForbiddenChars(res.properties[n].value)
             };
-            return cleanStringFromForbiddenChars(res.title)
+			return res.title
+//			return cleanStringFromForbiddenChars(res.title)
         }
 
         /**
@@ -417,16 +418,16 @@ define([ "vis" ], function (vis) {
 			if( stm.properties ) {
 				for (var n = 0; n < stm.properties.length; n++)
 					if (opts.titleProperties.includes(stm.properties[n].title))
-						return stm.properties[n].value
+						return cleanStringHtmlToUniCode(stm.properties[n].value)
             };
 			// else, try:
-            if( stm.title ) return stm.title;
+            if( stm.title ) return cleanStringHtmlToUniCode(stm.title);
 			// finally, get it from the class:
 			if( specifData.statementClasses ) {
 				let i = specifData.statementClasses.length;
 				while (i--) {
 					if (specifData.statementClasses[i].id === stm.statementClass)
-						return specifData.statementClasses[i].title
+						return cleanStringHtmlToUniCode(specifData.statementClasses[i].title)
 				}
 			};
             return null
@@ -450,12 +451,15 @@ define([ "vis" ], function (vis) {
         }
 
         /**
-         * Converts html unicode to utf8 unicode
+         * Converts html numeric character encoding to utf8
          * @param str String to be checked
          * @returns {string} cleaned string
          */
         function cleanStringHtmlToUniCode(str) {
-            return str.replace(/&#([0-9]{1,3});/g, function (match, numStr) {
+			str = str.replace(/&#x([0-9a-fA-F]+);/g, function (match, numStr) {
+                return String.fromCharCode(parseInt(numStr, 16))
+            });
+            return str.replace(/&#([0-9]+);/g, function (match, numStr) {
                 return String.fromCharCode(parseInt(numStr, 10))
             })
         }
