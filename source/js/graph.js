@@ -5,7 +5,7 @@
 define([ "vis" ], function (vis) {
 
     function init(specifData,opts) {
-			console.debug('init input',specifData,opts);
+//			console.debug('init input',specifData,opts);
 
 			// Check for missing options:
 			if ( !opts
@@ -16,7 +16,7 @@ define([ "vis" ], function (vis) {
 			// All required parameters are available, so we can begin:
 			let index = opts.index || 0;
             let relations = getAllStatementsOf( specifData.resources[index] );
-			console.debug('init relations',relations);
+//			console.debug('init relations',relations);
             //if there are no relations do not create a graph:
             if ( !relations ) return;
 
