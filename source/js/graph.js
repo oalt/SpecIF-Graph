@@ -12,9 +12,9 @@ define([ "vis" ], function (vis) {
 				|| !opts.canvas
 				|| !opts.titleProperties
 				) return;
+			let index = opts.index || 0;
 				
 			// All required parameters are available, so we can begin:
-			let index = opts.index || 0;
             let relations = getAllStatementsOf( specifData.resources[index] );
 //			console.debug('init relations',relations);
             //if there are no relations do not create a graph:
@@ -28,7 +28,7 @@ define([ "vis" ], function (vis) {
 
             for (let entry in relations) {
                 if (relations.hasOwnProperty(entry)) {
-                    if (entry === "pageTitle") {
+                    if (entry === "inFocus") {
                         id = pushMainNode( nodesData, relations[entry]);
                     }
                     else {
@@ -235,7 +235,7 @@ define([ "vis" ], function (vis) {
             let relProb = {count: 0, length: 0};
             for (let entry in rels) {
                 if (rels.hasOwnProperty(entry)) {
-                    if (entry !== "pageTitle") {
+                    if (entry !== "inFocus") {
                         if (rels[entry].targets.length) relProb.length++;
                         if (rels[entry].sources.length) relProb.length++;
                         relProb.count++
@@ -300,8 +300,7 @@ define([ "vis" ], function (vis) {
 
             if (array.length < 2 || relProp.count < 2) {
                 array.forEach(function (entry) {
-                    let pos = getNodePosition(id,
-                        relProp.count < 2 ? array.length : relProp.length, 0, 0);
+                    let pos = getNodePosition( id, relProp.count < 2 ? array.length : relProp.length, 0, 0 );
                     pushNodeAndEdge(id,
                         isTarget ? 0 : id,
                         isTarget ? id : 0,
@@ -401,11 +400,10 @@ define([ "vis" ], function (vis) {
 			if( res.properties ) {
 				for (var n=0; n<res.properties.length; n++)
 					if (opts.titleProperties.includes(res.properties[n].title))
-						return res.properties[n].value
-//						return cleanStringFromForbiddenChars(res.properties[n].value)
+						return cleanStringHtmlToUniCode(res.properties[n].value)
             };
-			return res.title
-//			return cleanStringFromForbiddenChars(res.title)
+            if( res.title ) return cleanStringHtmlToUniCode(res.title);
+            return null
         }
 
         /**
@@ -438,7 +436,7 @@ define([ "vis" ], function (vis) {
          * @param str String to be checked
          * @returns {string} cleaned string
          */
-        function cleanStringFromForbiddenChars(str) {
+/*		function cleanStringFromForbiddenChars(str) {
             str = cleanStringHtmlToUniCode(str);
             let i = str.length,
                 aRet = [];
@@ -449,7 +447,7 @@ define([ "vis" ], function (vis) {
             };
             return aRet.join('')
         }
-
+*/
         /**
          * Converts html numeric character encoding to utf8
          * @param str String to be checked
@@ -483,7 +481,7 @@ define([ "vis" ], function (vis) {
          */
         function getAllStatementsOf(res) {
             let stms = {
-				pageTitle: getResourceTitleByID(res.id).replace(/&#34;/g, "&#39;")
+				inFocus: getResourceTitleByID(res.id).replace(/&#34;/g, "&#39;")
 			};
             for (var i = 0; i < specifData.statements.length; i++) {
 				// SpecIF v0.10.x: subject/object without revision, v0.11.y: with revision
