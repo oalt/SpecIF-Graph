@@ -5,124 +5,131 @@
 define([ "vis" ], function (vis) {
 
     function init(specifData,opts) {
-//			console.debug('init input',specifData,opts);
+//		console.debug('init input',specifData,opts);
 
-			// Check for missing options:
-			if ( !opts
-				|| !opts.canvas
-				|| !opts.titleProperties
-				) return;
-			let index = opts.index || 0;
-				
-			// All required parameters are available, so we can begin:
-            let relations = getAllStatementsOf( specifData.resources[index] );
-//			console.debug('init relations',relations);
-            //if there are no relations do not create a graph:
-            if ( !relations ) return;
+		// Check for missing options:
+		if ( !opts
+			|| !opts.canvas
+			) return;
+		if( !opts.index || opts.index>specifData.resources.length-1 ) opts.index = 0;
+		if( !opts.titleProperties ) opts.titleProperties = [];
+			
+		// All required parameters are available, so we can begin:
+		let relations = collectStatementsByType( specifData.resources[opts.index] );
+		console.debug('init relations',relations);
+		// if there are no relations, do not create a graph:
+		if ( !relations ) return;
 
-            let nodesData = [];
-            let edgeData = [];
+		let nodesData = [];
+		let edgeData = [];
 
-            let relProp = getRelationsCountAndLength(relations);
-            let id = 0;
+		let idx = 0;
+		for (let entry in relations) {
+			// an iteration per relation type:
+			if (relations.hasOwnProperty(entry)) {
+				if (entry === "inFocus") {
+					idx = pushMainNode( nodesData, relations[entry] )
+				}
+				else {
+					let relProp = countRelationTypesAndEdges(relations);
+					idx = pushAllChildNodesAndEdges(idx, nodesData, edgeData, relations[entry], entry, relProp)
+				}
+			}
+		};
+		console.debug('rawData',nodesData,edgeData);
+		let nodes = new vis.DataSet(nodesData);
+		let edges = new vis.DataSet(edgeData);
+		let container = document.getElementById( opts.canvas );
 
-            for (let entry in relations) {
-                if (relations.hasOwnProperty(entry)) {
-                    if (entry === "inFocus") {
-                        id = pushMainNode( nodesData, relations[entry]);
-                    }
-                    else {
-                        id = pushAllChildNodesAndEdges(id, nodesData, edgeData, relations[entry], entry, relProp);
-                    }
-                }
-            };
-            let nodes = new vis.DataSet(nodesData);
-            let edges = new vis.DataSet(edgeData);
-            let container = document.getElementById( opts.canvas );
+		let data = {
+			nodes: nodes,
+			edges: edges
+		};
+		console.debug('data',nodes,edges);
+		let options = {
+			autoResize: true,
+			height: '100%',
+			width: '100%',
+			locale: 'en',
+			clickToUse: false,
+			nodes: {
+				shape: "box"
+			},
+			edges: {
+				font: {
+					align: "bottom"
+				},
+				smooth: {
+					type: "continuous"
+				}
+			},
+			manipulation: {
+				"enabled": false
+			},
+			physics: {
+				enabled: false
+			}
+		};
 
-            let data = {
-                nodes: nodes,
-                edges: edges
-            };
-            let options = {
-                autoResize: true,
-                height: '100%',
-                width: '100%',
-                locale: 'en',
-                clickToUse: false,
-                nodes: {
-                    shape: "box"
-                },
-                edges: {
-                    font: {
-                        align: "bottom"
-                    },
-                    smooth: {
-                        type: "continuous"
-                    }
-                },
-                manipulation: {
-                    "enabled": false
-                },
-                physics: {
-                    enabled: false
-                }
-            };
-
-            let network = new vis.Network(container, data, options);
-            network.getConnectedNodes("0").forEach(function (connectedNode) {
-                let neighbours = network.getConnectedNodes(connectedNode);
-                if (neighbours.length > 5) {
-                    closeCluster(connectedNode, network);
-                }
-            });
-            network.on("doubleClick", function (options) {
-                if (options.nodes.length === 1) {
-/*                  if (!isIE() && options.nodes[0] !== 0 &&
-                        network.getConnectedNodes(options.nodes[0]).length === 1 &&
-                        !network.clustering.isCluster(options.nodes[0])) {
-                  }
-*/                  if (typeof options.nodes[0] === "string" && options.nodes[0].includes(":")) {
-                        if (!network.clustering.isCluster(options.nodes[0])) return
-                    };
-                    let releaseOptions = {
-                        releaseFunction: function (clusterPosition, containedNodesPositions) {
-                            let newPositions = {};
-                            let dist, offset;
-                            let i = 0;
-                            let length = Object.keys(containedNodesPositions).length - 1;
-                            for (let id in containedNodesPositions) {
-                                if (containedNodesPositions.hasOwnProperty(id)) {
-                                    if (id === "0" || (!containedNodesPositions["0"] && !id.includes(":"))) {
-                                        newPositions[id] = {x: clusterPosition.x, y: clusterPosition.y};
-                                        if (id !== "0") {
-                                            offset = Math.atan(clusterPosition.y / clusterPosition.x);
-                                            if (clusterPosition.x < 0) offset += Math.PI;
-                                            dist = 100;
-                                        }
-                                    } 
+		let network = new vis.Network(container, data, options);
+		// Collapse/close a 'large' sub-network:
+		network.getConnectedNodes("0").forEach(function (connectedNode) {
+			let neighbours = network.getConnectedNodes(connectedNode);
+			if (neighbours.length > 5) {
+				closeCluster(connectedNode, network);
+			}
+		});
+		network.on("doubleClick", function (prms) {
+			console.debug("doubleClick",prms);
+			if (prms.nodes.length === 1) {
+				if (!isIE() && prms.nodes[0] !== 0 &&
+					network.getConnectedNodes(prms.nodes[0]).length === 1 &&
+					!network.clustering.isCluster(prms.nodes[0])) {
+					// it is a peripheral node with a single edge:
+					opts.onDoubleClick(prms.nodes[0])
+				};
+				if (typeof prms.nodes[0] === "string" && prms.nodes[0].includes(":")) {
+					if (!network.clustering.isCluster(prms.nodes[0])) return
+				};
+				// else, open or close the cluster depending in its state:
+				if (network.clustering.isCluster(prms.nodes[0])) {
+					let releaseOptions = {
+						releaseFunction: function (clusterPosition, containedNodesPositions) {
+							let newPositions = {};
+							let dist, offset;
+							let i = 0;
+							let length = Object.keys(containedNodesPositions).length - 1;
+							for (let id in containedNodesPositions) {
+								if (containedNodesPositions.hasOwnProperty(id)) {
+									if (id === "0" || (!containedNodesPositions["0"] && !id.includes(":"))) {
+										newPositions[id] = {x: clusterPosition.x, y: clusterPosition.y};
+										if (id !== "0") {
+											offset = Math.atan(clusterPosition.y / clusterPosition.x);
+											if (clusterPosition.x < 0) offset += Math.PI;
+											dist = 100;
+										}
+									} 
 									else {
-                                        newPositions[id] = getNodePosition(
-                                            i,
-                                            length,
-                                            clusterPosition.x, clusterPosition.y,
-                                            dist,
-                                            offset);
-                                        i++
-                                    }
-                                }
-                            };
-                            return newPositions
-                        }
-                    };
-                    if (network.clustering.isCluster(options.nodes[0])) {
-                        network.clustering.openCluster(options.nodes[0], releaseOptions);
-                    } 
-					else {
-                        closeCluster(options.nodes[0], network);
-                    }
-                }
-            });
+										newPositions[id] = calculateNodePosition(
+											i,
+											length,
+											clusterPosition.x, clusterPosition.y,
+											dist,
+											offset);
+										i++
+									}
+								}
+							};
+							return newPositions
+						}
+					};
+					network.clustering.openCluster(prms.nodes[0], releaseOptions)
+				} 
+				else {
+					closeCluster(prms.nodes[0], network);
+				}
+			}
+		});
 
 
         /**
@@ -147,26 +154,22 @@ define([ "vis" ], function (vis) {
             };
             network.clustering.clusterByConnection(node, options)
         }
-        function decode (str) {
-            return str.replace(/&#(\d+);/g, function(match, dec) {
-                return String.fromCharCode(dec)
-            })
-        }
+
         /**
          * wraps a text after e specific number of chars
          * @param str The Stringt that hast to be wrapped
          * @returns {string} the wrapped string
          */
-        function wrapText(str,maxWidth) {
-            str =decode(str);
-            let newLine = "\n",
+        function wrapText( str, maxLen ) {
+            str = xmlChar2utf8(str);
+            let newLine = '\n',
 				out = '',
 				found = false;
-            if (str.length < maxWidth+1) return str;
+            if ( str.length<maxLen+1 ) return str;
             do {
                 found = false;
-                // Inserts new line at first whitespace of the line
-                for ( var i = maxWidth-1; i > maxWidth-6; i--) {
+                // Insert new line at last whitespace before maxLen:
+                for ( var i = maxLen-1; i > maxLen*0.7; i--) {
                     if (testWhite(str.charAt(i))) {
                         out = out + [str.slice(0, i), newLine].join('');
                         str = str.slice(i + 1);
@@ -174,12 +177,12 @@ define([ "vis" ], function (vis) {
                         break
                     }
                 };
-                // Inserts new line at maxWidth position, the word is too long to wrap
+                // Inserts new line at maxLen position, the word is too long to wrap
                 if (!found) {
-                    out += [str.slice(0, maxWidth) + "-", newLine].join('');
-                    str = str.slice(maxWidth)
+                    out += [str.slice(0, maxLen) + "-", newLine].join('');
+                    str = str.slice(maxLen)
                 }
-            } while (str.length >= maxWidth);
+            } while ( str.length>maxLen-1 );
             return out + str
         }
 
@@ -203,7 +206,7 @@ define([ "vis" ], function (vis) {
          * @param offset the offset as rad angle where the placement start
          * @returns {{x: number, y: number, alpha: number}}
          */
-        function getNodePosition(i, length, x, y, dist, offset) {
+        function calculateNodePosition(i, length, x, y, dist, offset) {
 
             let pos = {x: 0, y: 0, alpha: 0};
             if (!dist) dist = 150;
@@ -222,40 +225,16 @@ define([ "vis" ], function (vis) {
         }
 
         /**
-         * Returns an object that contains two keys:
-         * count represents the number of relations
-         * length represents the number of relations multiplied with the number of available combinations
-         * e.g. if rels contains only one relation 'SpecIF:shows' and this has a list of targets and a list of sources
-         * then count would be 1 and length would be 2
-         * if it has a second relation 'SpecIF:writes' with only a object list that count would be 2 and length 3
-         * @param rels The relations object
-         * @returns {{count: number, length: number}}
-         */
-        function getRelationsCountAndLength(rels) {
-            let relProb = {count: 0, length: 0};
-            for (let entry in rels) {
-                if (rels.hasOwnProperty(entry)) {
-                    if (entry !== "inFocus") {
-                        if (rels[entry].targets.length) relProb.length++;
-                        if (rels[entry].sources.length) relProb.length++;
-                        relProb.count++
-                    }
-                }
-            };
-            return relProb
-        }
-
-        /**
          * pushes the Main Node into the nodesData array
          * @param nodesData
          * @param entry
          * @returns {number}
          */
-        function pushMainNode( nodesData, entry) {
+        function pushMainNode( nodesData, entry ) {
             nodesData.push(
                 {
                     id: 0,
-                    label: wrapText(entry,20),
+                    label: wrapText( getResourceTitleByID(entry), 20 ),
                     x: 0,
                     y: 0,
                     shape: "circle"
@@ -267,27 +246,27 @@ define([ "vis" ], function (vis) {
         /**
          * Pushes all child nodes and edges for targets and sources for a given relation entry in the nodesData
          * and edgeData object
-         * @param id A ongoing id number for all childs of the main node
+         * @param idx Anongoing number for all children of the main node
          * @param nodesData The nodesData object
          * @param edgeData The edgeData object
          * @param entry The relation entry
          * @param value the label for the edge
          * @param relProp the relation properties object containing length and relations number
-         * @returns returns a new id for the next object
+         * @returns returns a new idx for the next object
          */
-        function pushAllChildNodesAndEdges(id, nodesData, edgeData, entry, value, relProp) {
+        function pushAllChildNodesAndEdges(idx, nodesData, edgeData, entry, value, relProp) {
 
             if (entry.targets.length)
-                id = pushChildNodesAndEdges(id, nodesData, edgeData, entry.targets, value, relProp, true);
+                idx = pushChildNodesAndEdges(idx, nodesData, edgeData, entry.targets, value, relProp, true);
 
             if (entry.sources.length)
-                id = pushChildNodesAndEdges(id, nodesData, edgeData, entry.sources, value, relProp, false);
-            return id
+                idx = pushChildNodesAndEdges(idx, nodesData, edgeData, entry.sources, value, relProp, false);
+            return idx
         }
 
         /**
-         * Pushes one Child node and edge in the nodesData and edgeData object
-         * @param id The id of the node
+         * Pushes one child node and edge in the nodesData and edgeData object
+         * @param idx The id of the node
          * @param nodesData The nodesData object
          * @param edgeData The childData object
          * @param array Array of all connected child nodes
@@ -296,27 +275,28 @@ define([ "vis" ], function (vis) {
          * @param isTarget A bool that represents if it is a object or a subject relationship
          * @returns {*}
          */
-        function pushChildNodesAndEdges(id, nodesData, edgeData, array, value, relProp, isTarget) {
+        function pushChildNodesAndEdges(idx, nodesData, edgeData, array, value, relProp, isTarget) {
 
-            if (array.length < 2 || relProp.count < 2) {
+//          if (array.length < 2 || relProp.types < 2) {
+            if ( array.length < 2 ) {
                 array.forEach(function (entry) {
-                    let pos = getNodePosition( id, relProp.count < 2 ? array.length : relProp.length, 0, 0 );
-                    pushNodeAndEdge(id,
-                        isTarget ? 0 : id,
-                        isTarget ? id : 0,
+                    let pos = calculateNodePosition( idx, relProp.types<2 ? array.length : relProp.edges, 0, 0 );
+                    pushNodeAndEdge(idx,
+                        isTarget ? 0 : idx,
+                        isTarget ? idx : 0,
                         nodesData,
                         edgeData,
                         entry,
                         value,
                         pos);
-                    id++
+                    idx++
                 })
             } 
 			else {
-                let pos = getNodePosition(id, relProp.length, 0, 0);
-                pushNodeAndEdge(id,
-                    isTarget ? 0 : id,
-                    isTarget ? id : 0,
+                let pos = calculateNodePosition(idx, relProp.edges, 0, 0);
+                pushNodeAndEdge(idx,
+                    isTarget ? 0 : idx,
+                    isTarget ? idx : 0,
                     nodesData,
                     edgeData,
                     "",
@@ -324,19 +304,19 @@ define([ "vis" ], function (vis) {
                     pos);
                 let childID = 0;
                 array.forEach(function (entry) {
-                    let childPos = getNodePosition(
+                    let childPos = calculateNodePosition(
                         childID,
                         array.length,
                         pos.x, pos.y,
                         100,
                         pos.alpha);
-                    let childIDString = id + ":" + childID;
-                    pushNodeAndEdge(childIDString, id, childIDString, nodesData, edgeData, entry, "", childPos);
+                    let childIDString = idx + ":" + childID;
+                    pushNodeAndEdge(childIDString, idx, childIDString, nodesData, edgeData, entry, "", childPos);
                     childID++
                 });
-                id++
+                idx++
             };
-            return id
+            return idx
         }
 
         /**
@@ -353,7 +333,8 @@ define([ "vis" ], function (vis) {
         function pushNodeAndEdge(id, sourceID, targetID, nodesData, edgeData, entry, value, pos) {
             nodesData.push({
                 id: id,
-                label: wrapText(entry,20),
+				// cluster nodes do not have a label:
+                label: entry?wrapText( getResourceTitleByID(entry), 20 ):"",
                 x: pos.x,
                 y: pos.y,
                 shape: entry === "" ? "circle" : "box"
@@ -364,9 +345,8 @@ define([ "vis" ], function (vis) {
                 arrows: sourceID === 0 || targetID === 0 ? "to" : "",
                 label: value
             })
+//			console.debug('pushNodeAndEdge',entry,value)
         }
-
-	/* Start of SpecIF loader:     */		
 
 		/**
          * If the resource type of a resource has an icon this function returns the icon
@@ -382,28 +362,22 @@ define([ "vis" ], function (vis) {
 
         /**
          * Returns a string representing the title of a resource with the given id.
-         * The title is the combination of the resource's name and it's icon.
          * @param id the id of a resource
          * @returns {string} title of the resource with icon, if available
-         */
-        function getResourceTitleByID(id) {
-            let res = resourceByID(id);
-            return getIconForResourceClass(res.resourceClass) + getResourceTitle(res)
-        }
-
-        /**
-         * Returns a string representing the name of a resource with the given id.
-         * @param object the resource the name is searched for
-         * @returns {string} name of the resource
          */
         function getResourceTitle(res) {
 			if( res.properties ) {
 				for (var n=0; n<res.properties.length; n++)
 					if (opts.titleProperties.includes(res.properties[n].title))
-						return cleanStringHtmlToUniCode(res.properties[n].value)
+						return xmlChar2utf8(res.properties[n].value)
             };
-            if( res.title ) return cleanStringHtmlToUniCode(res.title);
-            return null
+            if( res.title ) return xmlChar2utf8(res.title);
+            return undefined
+        }
+        function getResourceTitleByID(id) {
+            let res = resourceByID(id);
+			if( res ) return getIconForResourceClass(res.resourceClass) + getResourceTitle(res);
+			return id
         }
 
         /**
@@ -414,21 +388,42 @@ define([ "vis" ], function (vis) {
         function getStatementTitle(stm) {
 			// Try to get it from a title property:
 			if( stm.properties ) {
-				for (var n = 0; n < stm.properties.length; n++)
+				for (var n=0; n<stm.properties.length; n++)
 					if (opts.titleProperties.includes(stm.properties[n].title))
-						return cleanStringHtmlToUniCode(stm.properties[n].value)
+						return xmlChar2utf8(stm.properties[n].value)
             };
 			// else, try:
-            if( stm.title ) return cleanStringHtmlToUniCode(stm.title);
+            if( stm.title ) return xmlChar2utf8(stm.title);
 			// finally, get it from the class:
 			if( specifData.statementClasses ) {
 				let i = specifData.statementClasses.length;
 				while (i--) {
 					if (specifData.statementClasses[i].id === stm.statementClass)
-						return cleanStringHtmlToUniCode(specifData.statementClasses[i].title)
+						return xmlChar2utf8(specifData.statementClasses[i].title)
 				}
 			};
-            return null
+            return undefined
+        }
+        function getStatementTitleByID(id) {
+            let stm = statementByID(id);
+            if( stm ) return getStatementTitle(stm);
+			return id
+        }
+
+        /**
+         * Returns the item for the given id
+         * @param id the id of the item
+         * @returns the item for the id or undefined if there is none
+         */
+        function resourceByID(id) {
+            for (var i = specifData.resources.length-1; i>-1; i--)
+                if (specifData.resources[i].id === id) return specifData.resources[i];
+			return undefined
+        }
+        function statementByID(id) {
+            for (var i = specifData.statements.length-1; i>-1; i--)
+                if (specifData.statements[i].id === id) return specifData.statements[i];
+			return undefined
         }
 
         /**
@@ -437,7 +432,7 @@ define([ "vis" ], function (vis) {
          * @returns {string} cleaned string
          */
 /*		function cleanStringFromForbiddenChars(str) {
-            str = cleanStringHtmlToUniCode(str);
+            str = xmlChar2utf8(str);
             let i = str.length,
                 aRet = [];
             while (i--) {
@@ -453,8 +448,13 @@ define([ "vis" ], function (vis) {
          * @param str String to be checked
          * @returns {string} cleaned string
          */
-        function cleanStringHtmlToUniCode(str) {
-			str = str.replace(/&#x([0-9a-fA-F]+);/g, function (match, numStr) {
+//		function cleanStringHtmlToUniCode(str) {
+        function xmlChar2utf8 (str) {
+/*			return str.replace(/&#(\d+);/g, function(match, dec) {
+                return String.fromCharCode(dec)
+            })
+        }
+*/			str = str.replace(/&#x([0-9a-fA-F]+);/g, function (match, numStr) {
                 return String.fromCharCode(parseInt(numStr, 16))
             });
             return str.replace(/&#([0-9]+);/g, function (match, numStr) {
@@ -463,46 +463,62 @@ define([ "vis" ], function (vis) {
         }
 
         /**
-         * Returns a resource for the given id
-         * @param id the id of the resource
-         * @returns the resource for the id or undefined if there is no resource
+         * Returns an object containing two properties:
+         * - types is the number of relation types
+         * - edges is the number of edges in the future graph
+		 * If a relation type has both sources and targets, types is 1 and edges is 2.
+		 * If a relation type has only sources OR targets, types and edges are 1.
+         * @param rels The relations object
+         * @returns {{types: number, edges: number}}
          */
-        function resourceByID(id) {
-            for (var i = specifData.resources.length-1; i>-1; i--)
-                if (specifData.resources[i].id === id) return specifData.resources[i];
-			return null
+        function countRelationTypesAndEdges(rels) {
+            let cnt = {types: 0, edges: 0};
+            for (let entry in rels) {
+                if (rels.hasOwnProperty(entry)) {
+                    if (entry !== "inFocus") {
+                        if (rels[entry].targets.length) cnt.edges++;
+                        if (rels[entry].sources.length) cnt.edges++;
+                        cnt.types++
+                    }
+                }
+            };
+//			console.debug('countRelationTypesAndEdges',rels,cnt);
+            return cnt
         }
 
         /**
-         * Returns a resource with pattern {relationtype:{targets:[],sources:[]}} containing all targets and sources
-         * related to the given resource and sorted after relation types
+         * Returns an object with pattern {relationtype:{targets:[],sources:[]}} containing all targets and sources
+         * related to the given resource and sorted by statement types
          * @param object The resource, where the relations are to
          * @returns json object of the statements with titles for statements, subjects and objects
          */
-        function getAllStatementsOf(res) {
+        function collectStatementsByType(res) {
             let stms = {
-				inFocus: getResourceTitleByID(res.id).replace(/&#34;/g, "&#39;")
+				inFocus: res.id
 			};
-            for (var i = 0; i < specifData.statements.length; i++) {
+            for (var i=0; i<specifData.statements.length; i++) {
 				// SpecIF v0.10.x: subject/object without revision, v0.11.y: with revision
 				let oid = specifData.statements[i].object.id || specifData.statements[i].object,
 					sid = specifData.statements[i].subject.id || specifData.statements[i].subject;
 				
-                if ( sid === res.id || oid === res.id) {
-                    let stmT = getStatementTitle(specifData.statements[i]);
-                    if (!stms[stmT]) {
-                        stms[stmT] = {
-                            targets: [],
-                            sources: []
+				if ( sid === res.id || oid === res.id) {
+					// all statements having the same title are clustered:
+					let stmC = getStatementTitle(specifData.statements[i]);
+					// all statements having the same class are clustered:
+//					let stmC = specifData.statements[i].statementClass;
+					if (!stms[stmC]) {
+						stms[stmC] = {
+							targets: [],
+							sources: []
                         }
-                    };
+					};
 					if ( oid===res.id ) {
-                        stms[stmT].sources.push( getResourceTitleByID(sid) )
+						stms[stmC].sources.push( sid )
 					} 
 					else {
-                        stms[stmT].targets.push( getResourceTitleByID(oid) )
+						stms[stmC].targets.push( oid )
 					}
-                }
+				}
             };
             return stms
         }
@@ -511,14 +527,11 @@ define([ "vis" ], function (vis) {
          * Checks if the ie 11 or lower is used
          * @returns {boolean} true if ie es 11 or lower else false
          */
-/*        function isIE() {
+        function isIE() {
             let ua = window.navigator.userAgent;
             let msie = ua.indexOf("MSIE ");
             return msie > 0 || !!navigator.userAgent.match(/Trident.*rv\:11\./);
         }
-*/    
-	/* End of SpecIF loader */
 	};
-
     return {init: init};
 });

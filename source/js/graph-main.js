@@ -12,12 +12,23 @@ require(["config"], function() {
 		let specif = specIFData;
 		let options = {
 			canvas:'specifGraph',
+			index: slider.val(),
 			/**
 			 * holds a set of common specIF title properties
 			 * @type {Array}
 			 */
 			titleProperties: ["dcterms:title", "ReqIF.Name", "SpecIF:Heading", "ReqIF.ChapterName"],
-			index: slider.val()
+			onDoubleClick: function( index, id ) {
+				console.log('Double Click on:',index,id);
+				if( index>-1 && index<specif.resources.length ) {
+					options.index = index
+//				}
+//				else {
+//					if( id && (typeof id=='string') ) 
+//						options.index = ..
+				};
+				graph.init(specif,options)
+			}
 		};
         $("#label").text("Index: " +options.index );
         graph.init(specif,options);
