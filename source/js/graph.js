@@ -39,10 +39,10 @@ define([ "vis" ], function (vis) {
 				let relProp = countRelationTypesAndEdges(relations);
 
 				if ( relations[entry].targets.length )
-					idx = pushChildNodesAndEdges(idx, relations[entry].targets, {title:entry}, relProp, true);
+					idx = pushChildNodesAndEdges(idx, relations[entry].targets, {title:entry}, relProp, false);
 
 				if ( relations[entry].sources.length )
-					idx = pushChildNodesAndEdges(idx, relations[entry].sources, {title:entry}, relProp, false);
+					idx = pushChildNodesAndEdges(idx, relations[entry].sources, {title:entry}, relProp, true);
 			}
 		};
 //		console.debug('rawData',nodesData,edgeData);
@@ -248,7 +248,7 @@ define([ "vis" ], function (vis) {
          * @param isTarget A bool that represents if it is a object or a subject relationship
          * @returns {*}
          */
-        function pushChildNodesAndEdges(idx, children, rel, relProp, isTarget) {
+        function pushChildNodesAndEdges(idx, children, rel, relProp, isSource) {
 
             if ( children.length < 2 ) {
 				// there is a single node related by the same type and same direction,
@@ -260,7 +260,7 @@ define([ "vis" ], function (vis) {
 					children[0],
 					pos,
 					rel,
-					false);
+					isSource);
 				idx++
             } 
 			else {
@@ -273,7 +273,7 @@ define([ "vis" ], function (vis) {
 					{},		// cluster node
 					pos,
 					rel,
-					false);
+					isSource);
 				let childID = 0;
 				children.forEach(function (child) {
 					let childPos = calculateNodePosition(
@@ -367,12 +367,7 @@ define([ "vis" ], function (vis) {
             if( res.title ) return getIconForResourceClass(res.resourceClass) + xmlChar2utf8(res.title);
             return undefined
         }
-/*        function getResourceTitleByID(id) {
-            let res = resourceByID(id);
-			if( res ) return getResourceTitle(res);
-			return id
-        }
-*/
+
         /**
          * Returns the title for a given statement
          * @param stm the given statement
@@ -397,12 +392,7 @@ define([ "vis" ], function (vis) {
 			};
             return undefined
         }
-/*      function getStatementTitleByID(id) {
-            let stm = statementById(id);
-            if( stm ) return getStatementTitle(stm);
-			return id
-        }
-*/
+
         /**
          * Returns the item for the given id
          * @param id the id of the item
