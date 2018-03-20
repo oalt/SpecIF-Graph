@@ -18,14 +18,14 @@ require(["config"], function() {
 			 * @type {Array}
 			 */
 			titleProperties: ["dcterms:title", "ReqIF.Name", "SpecIF:Heading", "ReqIF.ChapterName"],
-			onDoubleClick: function( index, id ) {
-				console.log('Double Click on:',index,id);
-				if( index>-1 && index<specif.resources.length ) {
-					options.index = index
-//				}
-//				else {
-//					if( id && (typeof id=='string') ) 
-//						options.index = ..
+			onDoubleClick: function( evt ) {
+				console.log('Double Click on:',evt);
+				if( evt.target.index>-1 && evt.target.index<specif.resources.length ) {
+					options.index = evt.target.index
+				}
+				else {
+					if( evt.target.resource && (typeof evt.target.resource=='string') ) 
+						options.index = indexById(specif.resources,evt.target.resource)
 				};
 				graph.init(specif,options)
 			}
@@ -43,6 +43,12 @@ require(["config"], function() {
         //Ohne Slider, hier einfach den Index der Ressource angeben
 //		let specif = specIFData;
 //		graph.init(specif,15);
+
+        function indexById(L,id) {
+            for (var i = L.length-1; i>-1; i--)
+                if (L[i].id === id) return i;
+			return -1
+        }
 
     });
 });
