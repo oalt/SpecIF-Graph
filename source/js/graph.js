@@ -13,6 +13,10 @@ define([ "vis" ], function (vis) {
 			) return;
 		if( !opts.index || opts.index>specifData.resources.length-1 ) opts.index = 0;
 		if( !opts.titleProperties ) opts.titleProperties = [];
+		if( !opts.focusColor ) opts.focusColor = '#6ca0dc';
+		if( !opts.nodeColor ) opts.nodeColor = '#afcbef';
+		if( !opts.edgeColor ) opts.edgeColor = 'black';
+		if( !opts.clusterColor ) opts.clusterColor = '#c3daf6';
 			
 		// All required parameters are available, so we can begin:
 		let relations = collectStatementsByType( specifData.resources[opts.index] );
@@ -23,27 +27,19 @@ define([ "vis" ], function (vis) {
 		let nodesData = [];
 		let edgeData = [];
 
+		let relProp = countRelationTypesAndEdges(relations);
 		let idx = pushMainNode( specifData.resources[opts.index] );  // returns always 1
-		for (let entry in relations) {
-			// an iteration per relation type:
-			if (relations.hasOwnProperty(entry)) {
-				/**
-				 * Pushes all child nodes and edges for targets and sources for a given relation class in the nodesData
-				 * and edgeData object
-				 * @param idx Anongoing number for all children of the main node
-				 * @param entry The relation entry
-				 * @param value the label for the edge
-				 * @param relProp the relation properties object containing length and relations number
-				 * @returns returns a new idx for the next object
-				 */
-				let relProp = countRelationTypesAndEdges(relations);
-
-				if ( relations[entry].targets.length )
-					idx = pushChildNodesAndEdges(idx, relations[entry].targets, {title:entry}, relProp, false);
-
-				if ( relations[entry].sources.length )
-					idx = pushChildNodesAndEdges(idx, relations[entry].sources, {title:entry}, relProp, true);
-			}
+		for (var entry in relations) {
+			// an iteration per relation type,
+			// first the inbound relations, i.e. where the node in focus is target:
+			if (relations.hasOwnProperty(entry) && relations[entry].sources.length )
+					idx = pushChildNodesAndEdges(idx, relations[entry].sources, {title:entry}, relProp, true)
+		};
+		for (var entry in relations) {
+			// an iteration per relation type,
+			// then the outbound relations, i.e. where the node in focus is source:
+			if (relations.hasOwnProperty(entry) && relations[entry].targets.length )
+					idx = pushChildNodesAndEdges(idx, relations[entry].targets, {title:entry}, relProp, false)
 		};
 //		console.debug('rawData',nodesData,edgeData);
 		let nodes = new vis.DataSet(nodesData);
@@ -54,7 +50,6 @@ define([ "vis" ], function (vis) {
 			nodes: nodes,
 			edges: edges
 		};
-//		console.debug('data',nodes,edges);
 		let options = {
 			autoResize: true,
 			height: '100%',
@@ -91,7 +86,9 @@ define([ "vis" ], function (vis) {
 		network.on("doubleClick", function (prms) {
 //			console.debug("doubleClick",prms);
 			if (prms.nodes.length === 1) {
-				if (!isIE() && prms.nodes[0] !== 0 &&
+				if( prms.nodes[0] == 0 ) return;  // no action for the node in focus
+				if( !isIE() && 
+					(typeof opts.onDoubleClick === "function") &&
 					network.getConnectedNodes(prms.nodes[0]).length === 1 &&
 					!network.clustering.isCluster(prms.nodes[0])) {
 					// it is a peripheral node with a single edge,
@@ -118,14 +115,15 @@ define([ "vis" ], function (vis) {
 										if (id !== "0") {
 											offset = Math.atan(clusterPosition.y / clusterPosition.x);
 											if (clusterPosition.x < 0) offset += Math.PI;
-											dist = 100;
+											dist = 160;
 										}
 									} 
 									else {
 										newPositions[id] = calculateNodePosition(
 											i,
+											Math.sqrt(2)*Math.PI, 
 											length,
-											clusterPosition.x, clusterPosition.y,
+											clusterPosition,
 											dist,
 											offset);
 										i++
@@ -142,7 +140,6 @@ define([ "vis" ], function (vis) {
 				}
 			}
 		});
-
 
         /**
          * This function closes a given cluster
@@ -161,6 +158,7 @@ define([ "vis" ], function (vis) {
                 },
                 clusterNodeProperties: {
                     label: "",
+					color: opts.clusterColor,
                     shape: "diamond"
                 }
             };
@@ -211,31 +209,28 @@ define([ "vis" ], function (vis) {
         /**
          * Returns a calculated Position for a given node
          * @param i the index of the node in the list of neighbour nodes of the parent
-         * @param length The length of the list of neighbour nodes of the parent
-         * @param x the x position of the parent
-         * @param y the y position of the parent
+         * @param count The length of the list of neighbour nodes per half-circle
+         * @param parentPos the position of the parent
          * @param dist the preferred distance between the parent node and this node
          * @param offset the offset angle [rad] to start the placement
          * @returns {{x: number, y: number, alpha: number}}
          */
-        function calculateNodePosition(i, length, x, y, dist, offset) {
+		function calculateNodePosition(i, sector, count, parentPos, dist, offset) {
 
-            let pos = {x: 0, y: 0, alpha: 0};
-            if (!dist) dist = 150;
-            let u = (length<5 ? 8 : length) * dist;
-            let r = u / (2 * Math.PI);
-            if (r < dist * 2) r = dist * 2;
-            if (r > 2 * dist && i % 2 === 0) r = r / 1.5;
-            else if (offset && i % 2 === 0) r = r / 2;
-
-            let alpha = (2 * Math.PI) / (length<5 ? 8 : length) * i;
-            if (offset) alpha = offset + alpha - (2 * Math.PI) / (length<5 ? 8 : length) * ((length - 1) / 2);
-            pos.x = x + r * Math.cos(alpha);
-            pos.y = y + r * Math.sin(alpha);
-            pos.alpha = alpha;
-//			console.debug('calculateNodePosition',pos)
-            return pos
-        }
+			let pos = {x: 0, y: 0, alpha: 0};
+			if (!dist) dist = 200;
+			let r = dist;
+			// alternate distance of neighboring nodes:
+			r = (i%2 === 1)? (r/1.2):(r*1.2);	
+			
+			let segment = sector/count;
+			let alpha = offset - sector/2 + segment*i + segment/2;
+			pos.x = parentPos.x + r * Math.cos(alpha);
+			pos.y = parentPos.y + r * Math.sin(alpha);
+			pos.alpha = alpha;
+//			console.debug('calculateNodePosition',i,alpha)
+			return pos
+		}
 
         /**
          * Pushes one child node and edge in the nodesData and edgeData object
@@ -248,39 +243,48 @@ define([ "vis" ], function (vis) {
          * @param isTarget A bool that represents if it is a object or a subject relationship
          * @returns {*}
          */
-        function pushChildNodesAndEdges(idx, children, rel, relProp, isSource) {
+        function pushChildNodesAndEdges(idx, children, rel, relProp, inbound) {
+			// the number of edges for the current half sector (inbound resp outbound):
+			let edges = inbound? relProp.sources:relProp.targets;
+			// the index for the relations in the current sector:
+			let sectorIdx = idx - (inbound? 0:relProp.sources) -1;
+			// position the inbound relation to the upper left side,
+			// and the outbound to the lower right.
+			// zero degrees is to the 'east', so inbound come from north-west and outbound go to south-east.
+			let offs = inbound? (Math.PI*1.25):(Math.PI*0.25);
 
             if ( children.length < 2 ) {
 				// there is a single node related by the same type and same direction,
 				// so the node is connected directly:
-				let pos = calculateNodePosition( idx, relProp.types<2 ? children.length : relProp.edges, 0, 0 );
+				let pos = calculateNodePosition( sectorIdx, Math.PI, edges, {x:0, y:0}, 240, offs );
 				pushNodeAndEdge(
 					idx,
 					0,		// node in focus has id==0
 					children[0],
 					pos,
 					rel,
-					isSource);
+					inbound);
 				idx++
             } 
 			else {
 				// there are several nodes related by the same type and same direction,
 				// so there will be a cluster node:
-                let pos = calculateNodePosition(idx, relProp.edges, 0, 0);
+                let pos = calculateNodePosition( sectorIdx, Math.PI, edges, {x:0, y:0}, 300, offs );
 				pushNodeAndEdge(
 					idx,
 					0,
 					{},		// cluster node
 					pos,
 					rel,
-					isSource);
+					inbound);
 				let childID = 0;
 				children.forEach(function (child) {
 					let childPos = calculateNodePosition(
 						childID,
+						Math.sqrt(2)*Math.PI, 
 						children.length,
-						pos.x, pos.y,
-						100,
+						pos,
+						160,
 						pos.alpha);
 					let childIDString = idx + ":" + childID;
 					pushNodeAndEdge(childIDString, idx, child, childPos, {}, false);
@@ -312,12 +316,14 @@ define([ "vis" ], function (vis) {
 				label: child.title? wrapText( getResourceTitle(child), 20 ):"",
 				x: pos.x,
 				y: pos.y,
+				color: child.id? opts.nodeColor:opts.clusterColor,
 				shape: child.id? "box":"circle"
 			});
 			edgeData.push({
 				from: inbound? childId:parentId,
 				to: inbound? parentId:childId,
 				arrows: parentId==0? "to":"",
+				color: opts.edgeColor,
 				label: rel.title?getStatementTitle(rel):""
 			})
 		}
@@ -334,6 +340,7 @@ define([ "vis" ], function (vis) {
                     label: wrapText( getResourceTitle(res), 20 ),
                     x: 0,
                     y: 0,
+					color: opts.focusColor,
                     shape: "box"
                 }
             );
@@ -431,13 +438,8 @@ define([ "vis" ], function (vis) {
          * @param str String to be checked
          * @returns {string} cleaned string
          */
-//		function cleanStringHtmlToUniCode(str) {
         function xmlChar2utf8 (str) {
-/*			return str.replace(/&#(\d+);/g, function(match, dec) {
-                return String.fromCharCode(dec)
-            })
-        }
-*/			str = str.replace(/&#x([0-9a-fA-F]+);/g, function (match, numStr) {
+			str = str.replace(/&#x([0-9a-fA-F]+);/g, function (match, numStr) {
                 return String.fromCharCode(parseInt(numStr, 16))
             });
             return str.replace(/&#([0-9]+);/g, function (match, numStr) {
@@ -455,11 +457,11 @@ define([ "vis" ], function (vis) {
          * @returns {{types: number, edges: number}}
          */
         function countRelationTypesAndEdges(rels) {
-            let cnt = {types: 0, edges: 0};
+            let cnt = {types: 0, sources: 0, targets: 0};
             for (let entry in rels) {
                 if (rels.hasOwnProperty(entry)) {
-                        if (rels[entry].targets.length) cnt.edges++;
-                        if (rels[entry].sources.length) cnt.edges++;
+                        if (rels[entry].targets.length) cnt.targets++;
+                        if (rels[entry].sources.length) cnt.sources++;
                         cnt.types++
                 }
             };
