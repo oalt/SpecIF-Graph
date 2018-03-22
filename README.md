@@ -7,7 +7,7 @@ Draws a neighborhood graph of a given [SpecIF](http://specif.de) resource. Input
 
 ## Required Libraries 
 1. Requirejs: Not essential, can easily be removed.
-2. Jquery: Only needed by the top level example code (graph-main).
+2. Jquery: Only used by the top level example code (graph-main).
 3. Vis.js: For creating the graph.
 
 ## Javascript-Sources
