@@ -8,8 +8,8 @@ class Circle extends CircleImageBase {
     this._setMargins(labelModule);
   }
 
-  resize(ctx, selected = this.selected, hover = this.hover, values = { size: this.options.size}) {
-    if ((this.width === undefined) || (this.labelModule.differentState(selected, hover))) {
+  resize(ctx, selected = this.selected, hover = this.hover) {
+    if (this.needsRefresh(selected, hover)) {
       this.textSize = this.labelModule.getTextSize(ctx, selected, hover);
       var diameter = Math.max(this.textSize.width + this.margin.right + this.margin.left,
                               this.textSize.height + this.margin.top + this.margin.bottom);
@@ -26,12 +26,7 @@ class Circle extends CircleImageBase {
     this.left = x - this.width / 2;
     this.top = y - this.height / 2;
 
-    this._drawRawCircle(ctx, x, y, selected, hover, values);
-
-    this.boundingBox.top = y - values.size;
-    this.boundingBox.left = x - values.size;
-    this.boundingBox.right = x + values.size;
-    this.boundingBox.bottom = y + values.size;
+    this._drawRawCircle(ctx, x, y, values);
 
     this.updateBoundingBox(x,y);
     this.labelModule.draw(ctx, this.left + this.textSize.width / 2 + this.margin.left,

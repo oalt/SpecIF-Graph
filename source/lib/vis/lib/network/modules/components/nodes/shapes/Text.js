@@ -9,7 +9,7 @@ class Text extends NodeBase {
   }
 
   resize(ctx, selected, hover) {
-    if ((this.width === undefined) || this.labelModule.differentState(selected, hover)) {
+    if (this.needsRefresh(selected, hover)) {
       this.textSize = this.labelModule.getTextSize(ctx, selected, hover);
       this.width = this.textSize.width + this.margin.right + this.margin.left;
       this.height = this.textSize.height + this.margin.top + this.margin.bottom;
@@ -31,18 +31,6 @@ class Text extends NodeBase {
     this.disableShadow(ctx, values);
 
     this.updateBoundingBox(x, y, ctx, selected, hover);
-  }
-
-  updateBoundingBox(x, y, ctx, selected, hover) {
-    this.resize(ctx, selected, hover);
-
-    this.left = x - this.width / 2;
-    this.top = y - this.height / 2;
-
-    this.boundingBox.top = this.top;
-    this.boundingBox.left = this.left;
-    this.boundingBox.right = this.left + this.width;
-    this.boundingBox.bottom = this.top + this.height;
   }
 
   distanceToBorder(ctx, angle) {

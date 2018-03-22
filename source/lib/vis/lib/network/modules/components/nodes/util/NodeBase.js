@@ -9,6 +9,7 @@ class NodeBase {
     this.width = undefined;
     this.radius = undefined;
     this.margin = undefined;
+    this.refreshNeeded = true;
     this.boundingBox = {top: 0, left: 0, right: 0, bottom: 0};
   }
 
@@ -88,6 +89,100 @@ class NodeBase {
         values.borderDashes = false;
       }
     }
+  }
+
+
+  /**
+   * Determine if the shape of a node needs to be recalculated.
+   *
+   * @protected
+   */
+  needsRefresh(selected, hover) {
+    if (this.refreshNeeded === true) {
+      // This is probably not the best location to reset this member.
+      // However, in the current logic, it is the most convenient one.
+      this.refreshNeeded = false;
+      return true;
+    }
+
+    return  (this.width === undefined) || (this.labelModule.differentState(selected, hover));
+  }
+
+
+  initContextForDraw(ctx, values) {
+    var borderWidth = values.borderWidth / this.body.view.scale;
+
+    ctx.lineWidth = Math.min(this.width, borderWidth);
+    ctx.strokeStyle = values.borderColor;
+    ctx.fillStyle = values.color;
+  }
+
+
+  performStroke(ctx, values) {
+    var borderWidth = values.borderWidth / this.body.view.scale;
+
+    //draw dashed border if enabled, save and restore is required for firefox not to crash on unix.
+    ctx.save();
+    // if borders are zero width, they will be drawn with width 1 by default. This prevents that
+    if (borderWidth > 0) {
+      this.enableBorderDashes(ctx, values);
+      //draw the border
+      ctx.stroke();
+      //disable dashed border for other elements
+      this.disableBorderDashes(ctx, values);
+    }
+    ctx.restore();
+  }
+
+
+  performFill(ctx, values) {
+    // draw shadow if enabled
+    this.enableShadow(ctx, values);
+    // draw the background
+    ctx.fill();
+    // disable shadows for other elements.
+    this.disableShadow(ctx, values);
+
+    this.performStroke(ctx, values);
+  }
+
+
+  _addBoundingBoxMargin(margin) {
+    this.boundingBox.left   -= margin;
+    this.boundingBox.top    -= margin;
+    this.boundingBox.bottom += margin;
+    this.boundingBox.right  += margin;
+  }
+
+
+  /**
+   * Actual implementation of this method call.
+   *
+   * Doing it like this makes it easier to override
+   * in the child classes.
+   */
+  _updateBoundingBox(x, y, ctx, selected, hover) {
+    if (ctx !== undefined) {
+      this.resize(ctx, selected, hover);
+    }
+
+    this.left = x - this.width / 2;
+    this.top  = y - this.height/ 2;
+
+    this.boundingBox.left   = this.left;
+    this.boundingBox.top    = this.top;
+    this.boundingBox.bottom = this.top + this.height;
+    this.boundingBox.right  = this.left + this.width;
+  }
+
+
+  /**
+   * Default implementation of this method call.
+   *
+   * This acts as a stub which can be overridden.
+   */
+  updateBoundingBox(x, y, ctx, selected, hover) {
+    this._updateBoundingBox(x, y, ctx, selected, hover);
   }
 }
 

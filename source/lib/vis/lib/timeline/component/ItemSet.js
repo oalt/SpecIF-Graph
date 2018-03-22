@@ -10,7 +10,7 @@ var BoxItem = require('./item/BoxItem');
 var PointItem = require('./item/PointItem');
 var RangeItem = require('./item/RangeItem');
 var BackgroundItem = require('./item/BackgroundItem');
-import Popup from '../../shared/Popup';
+var Popup = require('../../shared/Popup').default;
 
 
 var UNGROUPED = '__ungrouped__';   // reserved group id for ungrouped items
@@ -44,7 +44,10 @@ function ItemSet(body, options) {
 
     selectable: true,
     multiselect: false,
-    itemsAlwaysDraggable: false,
+    itemsAlwaysDraggable: {
+      item: false,
+      range: false,
+    },
 
     editable: {
       updateTime: false,
@@ -94,6 +97,8 @@ function ItemSet(body, options) {
       },
       axis: 20
     },
+
+    showTooltips: true,
 
     tooltip: {
       followMouse: false,
@@ -155,7 +160,6 @@ function ItemSet(body, options) {
   this.groupIds = [];
 
   this.selection = [];  // list with the ids of all selected nodes
-  this.stackDirty = true; // if true, all items will be restacked on next redraw
 
   this.popup = null;
 
@@ -335,11 +339,25 @@ ItemSet.prototype.setOptions = function(options) {
   if (options) {
     // copy all options that we know
     var fields = [
-      'type', 'rtl', 'align', 'order', 'stack', 'stackSubgroups', 'selectable', 'multiselect', 'itemsAlwaysDraggable', 
+      'type', 'rtl', 'align', 'order', 'stack', 'stackSubgroups', 'selectable', 'multiselect',
       'multiselectPerGroup', 'groupOrder', 'dataAttributes', 'template', 'groupTemplate', 'visibleFrameTemplate',
-      'hide', 'snap', 'groupOrderSwap', 'tooltip', 'tooltipOnItemUpdateTime'
+      'hide', 'snap', 'groupOrderSwap', 'showTooltips', 'tooltip', 'tooltipOnItemUpdateTime'
     ];
     util.selectiveExtend(fields, this.options, options);
+
+    if ('itemsAlwaysDraggable' in options) {
+      if (typeof options.itemsAlwaysDraggable === 'boolean') {
+        this.options.itemsAlwaysDraggable.item = options.itemsAlwaysDraggable;
+        this.options.itemsAlwaysDraggable.range = false;
+      }
+      else if (typeof options.itemsAlwaysDraggable === 'object') {
+        util.selectiveExtend(['item', 'range'], this.options.itemsAlwaysDraggable, options.itemsAlwaysDraggable);
+        // only allow range always draggable when item is always draggable as well
+        if (! this.options.itemsAlwaysDraggable.item) {
+          this.options.itemsAlwaysDraggable.range = false;
+        }
+      }
+    }
 
     if ('orientation' in options) {
       if (typeof options.orientation === 'string') {
@@ -418,7 +436,6 @@ ItemSet.prototype.setOptions = function(options) {
  */
 ItemSet.prototype.markDirty = function(options) {
   this.groupIds = [];
-  this.stackDirty = true;
 
   if (options && options.refreshItems) {
     util.forEach(this.items, function (item) {
@@ -546,7 +563,7 @@ ItemSet.prototype.getVisibleItems = function() {
   for (var groupId in this.groups) {
     if (this.groups.hasOwnProperty(groupId)) {
       var group = this.groups[groupId];
-      var rawVisibleItems = group.visibleItems;
+      var rawVisibleItems = group.isVisible ? group.visibleItems : [];
 
       // filter the "raw" set with visibleItems into a set which is really
       // visible by pixels
@@ -617,12 +634,16 @@ ItemSet.prototype.redraw = function() {
   var visibleInterval = range.end - range.start;
   var zoomed = (visibleInterval != this.lastVisibleInterval) || (this.props.width != this.props.lastWidth);
   var scrolled = range.start != this.lastRangeStart;
-  if (zoomed || scrolled) this.stackDirty = true;
+  var changedStackOption = options.stack != this.lastStack
+  var changedStackSubgroupsOption = options.stackSubgroups != this.lastStackSubgroups
+  var forceRestack = (zoomed || scrolled || changedStackOption || changedStackSubgroupsOption);
   this.lastVisibleInterval = visibleInterval;
   this.lastRangeStart = range.start;
+  this.lastStack = options.stack;
+  this.lastStackSubgroups = options.stackSubgroups;
+
   this.props.lastWidth = this.props.width;
 
-  var restack = this.stackDirty;
   var firstGroup = this._firstGroup();
   var firstMargin = {
     item: margin.item,
@@ -636,17 +657,16 @@ ItemSet.prototype.redraw = function() {
   var minHeight = margin.axis + margin.item.vertical;
 
   // redraw the background group
-  this.groups[BACKGROUND].redraw(range, nonFirstMargin, restack);
+  this.groups[BACKGROUND].redraw(range, nonFirstMargin, forceRestack);
 
   // redraw all regular groups
   util.forEach(this.groups, function (group) {
     var groupMargin = (group == firstGroup) ? firstMargin : nonFirstMargin;
-    var groupResized = group.redraw(range, groupMargin, restack);
+    var groupResized = group.redraw(range, groupMargin, forceRestack);
     resized = groupResized || resized;
     height += group.height;
   });
   height = Math.max(height, minHeight);
-  this.stackDirty = false;
 
   // update frame height
   frame.style.height  = asSize(height);
@@ -978,7 +998,6 @@ ItemSet.prototype._onUpdate = function(ids) {
   }.bind(this));
 
   this._order();
-  this.stackDirty = true; // force re-stacking of all items next redraw
   this.body.emitter.emit('_change', {queue: true});
 };
 
@@ -1008,7 +1027,6 @@ ItemSet.prototype._onRemove = function(ids) {
   if (count) {
     // update order
     this._order();
-    this.stackDirty = true; // force re-stacking of all items next redraw
     this.body.emitter.emit('_change', {queue: true});
   }
 };
@@ -1196,14 +1214,6 @@ ItemSet.prototype._addItem = function(item) {
  * @private
  */
 ItemSet.prototype._updateItem = function(item, itemData) {
-  var oldGroupId = item.data.group;
-  var oldSubGroupId = item.data.subgroup;
-
-  if (oldGroupId != itemData.group) {
-    var oldGroup = this.groups[oldGroupId];
-    if (oldGroup) oldGroup.remove(item);
-  }
-
   // update the items data (will redraw the item when displayed)
   item.setData(itemData);
 
@@ -1213,14 +1223,6 @@ ItemSet.prototype._updateItem = function(item, itemData) {
     item.groupShowing = false;
   } else if (group && group.data && group.data.showNested) {
     item.groupShowing = true;
-  }
-  // update group
-  if (group) {
-    if (oldGroupId != item.data.group) {
-      group.add(item);
-    } else if (oldSubGroupId != item.data.subgroup) {
-      group.changeSubgroup(item, oldSubGroupId);
-    }
   }
 };
 
@@ -1305,7 +1307,7 @@ ItemSet.prototype._onDragStart = function (event) {
   var me = this;
   var props;
 
-  if (item && (item.selected || this.options.itemsAlwaysDraggable)) {
+  if (item && (item.selected || this.options.itemsAlwaysDraggable.item)) {
 
     if (this.options.editable.overrideItems &&
         !this.options.editable.updateTime &&
@@ -1345,9 +1347,15 @@ ItemSet.prototype._onDragStart = function (event) {
       this.touchParams.itemProps = [props];
     }
     else {
+      if(this.groupIds.length < 1) {
+        // Mitigates a race condition if _onDragStart() is
+        // called after markDirty() without redraw() being called between.
+        this.redraw();
+      }
+      
       var baseGroupIndex = this._getGroupIndex(item.data.group);
 
-      var itemsToDrag = (this.options.itemsAlwaysDraggable && !item.selected) ? [item.id] : this.getSelection();
+      var itemsToDrag = (this.options.itemsAlwaysDraggable.item && !item.selected) ? [item.id] : this.getSelection();
 
       this.touchParams.itemProps = itemsToDrag.map(function (id) {
         var item = me.items[id];
@@ -1556,7 +1564,6 @@ ItemSet.prototype._onDrag = function (event) {
           //make sure we stay in bounds
           newOffset = Math.max(0, newOffset);
           newOffset = Math.min(me.groupIds.length-1, newOffset);
-
           itemData.group = me.groupIds[newOffset];
         }
       }
@@ -1569,8 +1576,7 @@ ItemSet.prototype._onDrag = function (event) {
         }
       }.bind(this));
     }.bind(this));
-
-    this.stackDirty = true; // force re-stacking of all items next redraw
+	
     this.body.emitter.emit('_change');
   }
 };
@@ -1587,10 +1593,11 @@ ItemSet.prototype._moveToGroup = function(item, groupId) {
     var oldGroup = item.parent;
     oldGroup.remove(item);
     oldGroup.order();
+    
+    item.data.group = group.groupId;
+    
     group.add(item);
     group.order();
-
-    item.data.group = group.groupId;
   }
 };
 
@@ -1622,7 +1629,6 @@ ItemSet.prototype._onDragEnd = function (event) {
           }
 
           // force re-stacking of all items next redraw
-          me.stackDirty = true;
           me.body.emitter.emit('_change');
         });
       }
@@ -1639,7 +1645,6 @@ ItemSet.prototype._onDragEnd = function (event) {
             // restore original values
             props.item.setData(props.data);
 
-            me.stackDirty = true; // force re-stacking of all items next redraw
             me.body.emitter.emit('_change');
           }
         });
@@ -1906,7 +1911,7 @@ ItemSet.prototype._onMouseOver = function (event) {
   }
 
   var title = item.getTitle();
-  if (title) {
+  if (this.options.showTooltips && title) {
     if (this.popup == null) {
       this.popup = new Popup(this.body.dom.root,
           this.options.tooltip.overflowMethod || 'flip');
@@ -1956,7 +1961,7 @@ ItemSet.prototype._onMouseMove = function (event) {
   var item = this.itemFromTarget(event);
   if (!item) return;
 
-  if (this.options.tooltip.followMouse) {
+  if (this.options.showTooltips && this.options.tooltip.followMouse) {
     if (this.popup) {
       if (!this.popup.hidden) {
         var container = this.body.dom.centerContainer;
@@ -2031,27 +2036,23 @@ ItemSet.prototype._onAddItem = function (event) {
     var scale = this.body.util.getScale();
     var step = this.body.util.getStep();
 
-    var newItemData = {
-      start: snap ? snap(start, scale, step) : start,
-      content: 'new item'
-    };
-
+    var newItemData;
     if (event.type == 'drop') {
-      var itemData = JSON.parse(event.dataTransfer.getData("text"))
-      newItemData.content = itemData.content; // content is required 
-      newItemData.type = itemData.type || 'box';
-      newItemData[this.itemsData._fieldId] = itemData.id || util.randomUUID();
+      newItemData = JSON.parse(event.dataTransfer.getData("text"))
+      newItemData.content = newItemData.content ? newItemData.content : 'new item'
+      newItemData.start = newItemData.start ? newItemData.start : (snap ? snap(start, scale, step) : start) 
+      newItemData.type = newItemData.type || 'box';
+      newItemData[this.itemsData._fieldId] = newItemData.id || util.randomUUID();
 
-      if (itemData.type == 'range' || (itemData.end && itemData.start)) {
-        if (!itemData.end) {
-          var end = this.body.util.toTime(x + this.props.width / 5);
-          newItemData.end = snap ? snap(end, scale, step) : end;
-        } else {
-          newItemData.end = itemData.end;
-          newItemData.start = itemData.start;
-        }
+      if (newItemData.type == 'range' && !newItemData.end) {
+        var end = this.body.util.toTime(x + this.props.width / 5);
+        newItemData.end = snap ? snap(end, scale, step) : end;
       }
     } else {
+      newItemData = {
+        start: snap ? snap(start, scale, step) : start,
+        content: 'new item'
+      };
       newItemData[this.itemsData._fieldId] = util.randomUUID();
 
       // when default type is a range, add a default end date to the new item
@@ -2237,8 +2238,16 @@ ItemSet.prototype.itemFromRelatedTarget = function(event) {
  */
 ItemSet.prototype.groupFromTarget = function(event) {
   var clientY = event.center ? event.center.y : event.clientY;
-  for (var i = 0; i < this.groupIds.length; i++) {
-    var groupId = this.groupIds[i];
+  var groupIds = this.groupIds;
+  
+  if (groupIds.length <= 0 && this.groupsData) {
+    groupIds = this.groupsData.getIds({
+      order: this.options.groupOrder
+    });
+  }
+  
+  for (var i = 0; i < groupIds.length; i++) {
+    var groupId = groupIds[i];
     var group = this.groups[groupId];
     var foreground = group.dom.foreground;
     var top = util.getAbsoluteTop(foreground);

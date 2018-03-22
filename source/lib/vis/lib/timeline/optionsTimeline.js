@@ -26,7 +26,11 @@ let allOptions = {
   //globals :
   align: {string},
   rtl: { 'boolean': bool, 'undefined': 'undefined'},
-  rollingMode: { 'boolean': bool, 'undefined': 'undefined'},
+  rollingMode: {
+    follow: { 'boolean': bool },
+    offset: {number,'undefined': 'undefined'},
+    __type__: {object}
+  },
   verticalScroll: { 'boolean': bool, 'undefined': 'undefined'},
   horizontalScroll: { 'boolean': bool, 'undefined': 'undefined'},
   autoResize: { 'boolean': bool},
@@ -50,6 +54,7 @@ let allOptions = {
       hour: {string,'undefined': 'undefined'},
       weekday: {string,'undefined': 'undefined'},
       day: {string,'undefined': 'undefined'},
+      week: {string,'undefined': 'undefined'},
       month: {string,'undefined': 'undefined'},
       year: {string,'undefined': 'undefined'},
       __type__: {object, 'function': 'function'}
@@ -61,6 +66,7 @@ let allOptions = {
       hour: {string,'undefined': 'undefined'},
       weekday: {string,'undefined': 'undefined'},
       day: {string,'undefined': 'undefined'},
+      week: {string,'undefined': 'undefined'},
       month: {string,'undefined': 'undefined'},
       year: {string,'undefined': 'undefined'},
       __type__: {object, 'function': 'function'}
@@ -83,7 +89,11 @@ let allOptions = {
     repeat: {string},
     __type__: {object, array}
   },
-  itemsAlwaysDraggable: { 'boolean': bool},
+  itemsAlwaysDraggable: {
+	 item: { 'boolean': bool, 'undefined': 'undefined'},
+	 range: { 'boolean': bool, 'undefined': 'undefined'},
+	 __type__: { 'boolean': bool, object}
+  },
   locale:{string},
   locales:{
     __any__: {any},
@@ -131,6 +141,7 @@ let allOptions = {
   template: {'function': 'function'},
   groupTemplate: {'function': 'function'},
   visibleFrameTemplate: {string, 'function': 'function'},
+  showTooltips: { 'boolean': bool},
   tooltip: {
     followMouse: { 'boolean': bool },
     overflowMethod: { 'string': ['cap', 'flip'] },
@@ -177,6 +188,7 @@ let configureOptions = {
         hour:       'HH:mm',
         weekday:    'ddd D',
         day:        'D',
+        week:       'w',
         month:      'MMM',
         year:       'YYYY'
       },
@@ -187,6 +199,7 @@ let configureOptions = {
         hour:       'ddd D MMMM',
         weekday:    'MMMM YYYY',
         day:        'MMMM YYYY',
+        week:       'MMMM YYYY',
         month:      'YYYY',
         year:       ''
       }
@@ -232,9 +245,10 @@ let configureOptions = {
     start: '',
     //template: {'function': 'function'},
     //timeAxis: {
-    //  scale: ['millisecond', 'second', 'minute', 'hour', 'weekday', 'day', 'month', 'year'],
+    //  scale: ['millisecond', 'second', 'minute', 'hour', 'weekday', 'day', 'week', 'month', 'year'],
     //  step: [1, 1, 10, 1]
     //},
+    showTooltips: true,
     tooltip: {
       followMouse: false,
       overflowMethod: 'flip'

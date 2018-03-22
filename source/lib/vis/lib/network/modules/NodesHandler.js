@@ -2,8 +2,8 @@ let util = require("../../util");
 let DataSet = require('../../DataSet');
 let DataView = require('../../DataView');
 
-import Node  from "./components/Node";
-import Label from "./components/shared/Label";
+var Node = require("./components/Node").default;
+var Label = require("./components/shared/Label").default;
 
 class NodesHandler {
   constructor(body, images, groups, layoutEngine) {
@@ -64,7 +64,7 @@ class NodesHandler {
         mono: {
           mod: '',
           size: 15, // px
-          face: 'courier new',
+          face: 'monospace',
           vadjust: 2
         }
       },
@@ -129,6 +129,12 @@ class NodesHandler {
       x: undefined,
       y: undefined
     };
+
+    // Protect from idiocy
+    if (this.defaultOptions.mass <= 0) {
+      throw 'Internal error: mass in defaultOptions of NodesHandler may not be zero or negative';
+    }
+
     util.extend(this.options, this.defaultOptions);
 
     this.bindEventListeners();
@@ -171,7 +177,7 @@ class NodesHandler {
         for (let nodeId in this.body.nodes) {
           if (this.body.nodes.hasOwnProperty(nodeId)) {
             this.body.nodes[nodeId].updateLabelModule();
-            this.body.nodes[nodeId]._reset();
+            this.body.nodes[nodeId].needsRefresh();
           }
         }
       }
@@ -180,12 +186,12 @@ class NodesHandler {
       if (options.size !== undefined) {
         for (let nodeId in this.body.nodes) {
           if (this.body.nodes.hasOwnProperty(nodeId)) {
-            this.body.nodes[nodeId]._reset();
+            this.body.nodes[nodeId].needsRefresh();
           }
         }
       }
 
-      // update the state of the letiables if needed
+      // update the state of the variables if needed
       if (options.hidden !== undefined || options.physics !== undefined) {
         this.body.emitter.emit('_dataChanged');
       }
@@ -330,7 +336,7 @@ class NodesHandler {
       if (nodes.hasOwnProperty(nodeId)) {
         node = nodes[nodeId];
       }
-      let data = this.body.data.nodes._data[nodeId];
+      let data = this.body.data.nodes.get(nodeId);
       if (node !== undefined && data !== undefined) {
         if (clearPositions === true) {
           node.setOptions({x:null, y:null});
@@ -408,22 +414,24 @@ class NodesHandler {
   /**
    * Get the Ids of nodes connected to this node.
    * @param nodeId
+   * @param direction {String|undefined} values 'from' and 'to' select respectively parent and child nodes only.
+   *                                     Any other value returns both parent and child nodes.
    * @returns {Array}
    */
-  getConnectedNodes(nodeId) {
+  getConnectedNodes(nodeId, direction) {
     let nodeList = [];
     if (this.body.nodes[nodeId] !== undefined) {
       let node = this.body.nodes[nodeId];
       let nodeObj = {}; // used to quickly check if node already exists
       for (let i = 0; i < node.edges.length; i++) {
         let edge = node.edges[i];
-        if (edge.toId == node.id) { // these are double equals since ids can be numeric or string
+        if (direction !== 'to' && edge.toId == node.id) { // these are double equals since ids can be numeric or string
           if (nodeObj[edge.fromId] === undefined) {
             nodeList.push(edge.fromId);
             nodeObj[edge.fromId] = true;
           }
         }
-        else if (edge.fromId == node.id) { // these are double equals since ids can be numeric or string
+        else if (direction !== 'from' && edge.fromId == node.id) { // these are double equals since ids can be numeric or string
           if (nodeObj[edge.toId] === undefined) {
             nodeList.push(edge.toId);
             nodeObj[edge.toId] = true;
