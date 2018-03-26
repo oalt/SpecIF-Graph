@@ -13,6 +13,7 @@ define([ "vis" ], function (vis) {
 			) return;
 		if( !opts.index || opts.index>specifData.resources.length-1 ) opts.index = 0;
 		if( !opts.titleProperties ) opts.titleProperties = [];
+		if( !opts.lineLength ) opts.lineLength = 22;
 		if( !opts.focusColor ) opts.focusColor = '#6ca0dc';
 		if( !opts.nodeColor ) opts.nodeColor = '#afcbef';
 		if( !opts.edgeColor ) opts.edgeColor = 'black';
@@ -33,13 +34,13 @@ define([ "vis" ], function (vis) {
 			// an iteration per relation type,
 			// first the inbound relations, i.e. where the node in focus is target:
 			if (relations.hasOwnProperty(entry) && relations[entry].sources.length )
-					idx = pushChildNodesAndEdges(idx, relations[entry].sources, {title:entry}, relProp, true)
+					idx = pushChildNodesAndEdges(idx, relations[entry].sources, relProp, true)
 		};
 		for (var entry in relations) {
 			// an iteration per relation type,
 			// then the outbound relations, i.e. where the node in focus is source:
 			if (relations.hasOwnProperty(entry) && relations[entry].targets.length )
-					idx = pushChildNodesAndEdges(idx, relations[entry].targets, {title:entry}, relProp, false)
+					idx = pushChildNodesAndEdges(idx, relations[entry].targets, relProp, false)
 		};
 //		console.debug('rawData',nodesData,edgeData);
 		let nodes = new vis.DataSet(nodesData);
@@ -94,7 +95,7 @@ define([ "vis" ], function (vis) {
 					// it is a peripheral node with a single edge,
 					// extract the node-id from 'n:m=id':
 					let nId = prms.nodes[0].match(/.+=([\S]+)/)[1];
-					opts.onDoubleClick({target:{resource:nId}});
+					opts.onDoubleClick({target:{resource:nId,statement:prms.edges[0]}});
 					return
 				};
 				if (typeof prms.nodes[0] === "string" && prms.nodes[0].includes(":")) {
@@ -163,37 +164,40 @@ define([ "vis" ], function (vis) {
                 }
             };
             network.clustering.clusterByConnection(node, options)
-        }
+        } 
 
         /**
          * wraps a text after e specific number of chars
-         * @param str The Stringt that hast to be wrapped
+         * @param str The String that hast to be wrapped
          * @returns {string} the wrapped string
          */
-        function wrapText( str, maxLen ) {
-            str = xmlChar2utf8(str);
-            let newLine = '\n',
-				out = '',
-				found = false;
+        function wrap( str, maxLen ) {
             if ( str.length<maxLen+1 ) return str;
-            do {
-                found = false;
-                // Insert new line at last whitespace before maxLen:
-                for ( var i = maxLen-1; i > maxLen*0.7; i--) {
-                    if (testWhite(str.charAt(i))) {
-                        out = out + [str.slice(0, i), newLine].join('');
-                        str = str.slice(i + 1);
-                        found = true;
-                        break
-                    }
-                };
-                // Inserts new line at maxLen position, the word is too long to wrap
-                if (!found) {
-                    out += [str.slice(0, maxLen) + "-", newLine].join('');
-                    str = str.slice(maxLen)
-                }
-            } while ( str.length>maxLen-1 );
-            return out + str
+			// separate title into single words:
+			let words = str.match(/[^-\s]+[-\s]{0,}/g),  // don't like '*/', even if it is correct and working 
+				newLine = '\n',
+				lineLength = 0,
+				part = '',
+				out = '';
+			// simple algorithm working quite nicely with words < maxLen/2.
+			for(var i=0;i<words.length;i++) {  // re-evaluate words.length every time, as it may grow while looping
+				// hyphenate 'long' words:
+				if( words[i].length>maxLen ) {
+					part = words[i].slice(Math.round(words[i].length/2));
+					words.splice(i+1,0,part);  // insert second part
+					words[i] = words[i].slice(0,Math.round(words[i].length/2)) +'-'  // update first part
+				};
+				// combine words to lines with length<maxLen:
+				if( (lineLength+words[i].length)<maxLen ) {
+					out += words[i];
+					lineLength += words[i].length
+				}
+				else {
+					out += newLine + words[i];
+					lineLength = words[i].length
+				}
+			};
+			return out
         }
 
         /**
@@ -243,7 +247,7 @@ define([ "vis" ], function (vis) {
          * @param isTarget A bool that represents if it is a object or a subject relationship
          * @returns {*}
          */
-        function pushChildNodesAndEdges(idx, children, rel, relProp, inbound) {
+        function pushChildNodesAndEdges(idx, children, relProp, inbound) {
 			// the number of edges for the current half sector (inbound resp outbound):
 			let edges = inbound? relProp.sources:relProp.targets;
 			// the index for the relations in the current sector:
@@ -252,6 +256,7 @@ define([ "vis" ], function (vis) {
 			// and the outbound to the lower right.
 			// zero degrees is to the 'east', so inbound come from north-west and outbound go to south-east.
 			let offs = inbound? (Math.PI*1.25):(Math.PI*0.25);
+//			console.debug('push',relG,children,inbound)
 
             if ( children.length < 2 ) {
 				// there is a single node related by the same type and same direction,
@@ -260,9 +265,9 @@ define([ "vis" ], function (vis) {
 				pushNodeAndEdge(
 					idx,
 					0,		// node in focus has id==0
-					children[0],
+					children[0].resource,
 					pos,
-					rel,
+					children[0].statement,
 					inbound);
 				idx++
             } 
@@ -275,7 +280,7 @@ define([ "vis" ], function (vis) {
 					0,
 					{},		// cluster node
 					pos,
-					rel,
+					{title: children[0].statement.title},	// assuming that all have the same title; don't supply id!
 					inbound);
 				let childID = 0;
 				children.forEach(function (child) {
@@ -287,7 +292,7 @@ define([ "vis" ], function (vis) {
 						160,
 						pos.alpha);
 					let childIDString = idx + ":" + childID;
-					pushNodeAndEdge(childIDString, idx, child, childPos, {}, false);
+					pushNodeAndEdge(childIDString, idx, child.resource, childPos, child.statement, false);
 					childID++
 				});
 				idx++
@@ -309,23 +314,24 @@ define([ "vis" ], function (vis) {
 		function pushNodeAndEdge(idx, parentId, child, pos, rel, inbound) {
 			// include always idx, as the same element can be shown several times and childID must be unique:
 			let childId = child.id? idx+'='+child.id:idx;
-//			console.debug('pushNodeAndEdge',child,childId);
 			nodesData.push({
 				// cluster nodes don't have id nor label:
 				id: childId,
-				label: child.title? wrapText( getResourceTitle(child), 20 ):"",
+				label: child.title? wrap( getResourceTitle(child), opts.lineLength ):"",
 				x: pos.x,
 				y: pos.y,
 				color: child.id? opts.nodeColor:opts.clusterColor,
 				shape: child.id? "box":"circle"
 			});
-			edgeData.push({
+			let edge = {
 				from: inbound? childId:parentId,
 				to: inbound? parentId:childId,
 				arrows: parentId==0? "to":"",
 				color: opts.edgeColor,
-				label: rel.title?getStatementTitle(rel):""
-			})
+				label: rel.title? getStatementTitle(rel):""
+			};
+			if( rel.id ) edge.id = rel.id;
+			edgeData.push( edge )
 		}
 
         /**
@@ -337,7 +343,7 @@ define([ "vis" ], function (vis) {
             nodesData.push(
                 {
                     id: 0,
-                    label: wrapText( getResourceTitle(res), 20 ),
+                    label: wrap( getResourceTitle(res), opts.lineLength ),
                     x: 0,
                     y: 0,
 					color: opts.focusColor,
@@ -356,7 +362,7 @@ define([ "vis" ], function (vis) {
 			if( specifData.resourceClasses )
 				for (var i = specifData.resourceClasses.length-1; i>-1; i--)
 					if (specifData.resourceClasses[i].id === type)
-						return specifData.resourceClasses[i].icon ? specifData.resourceClasses[i].icon + " " : "";
+						return specifData.resourceClasses[i].icon ? xmlChar2utf8(specifData.resourceClasses[i].icon) + " " : "";
 			return ""
         }
 
@@ -493,12 +499,10 @@ define([ "vis" ], function (vis) {
 							sources: []
                         }
 					};
-					if ( oid===res.id ) {
-						stms[stmC].sources.push( resourceById(sid) )
-					} 
-					else {
-						stms[stmC].targets.push( resourceById(oid) )
-					}
+					if ( oid===res.id )
+						stms[stmC].sources.push( {resource:resourceById(sid),statement:specifData.statements[i]} )
+					else
+						stms[stmC].targets.push( {resource:resourceById(oid),statement:specifData.statements[i]} )
 				}
             };
             return stms
