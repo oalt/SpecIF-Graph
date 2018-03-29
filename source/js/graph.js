@@ -323,12 +323,14 @@ define([ "vis" ], function (vis) {
 				color: child.id? opts.nodeColor:opts.clusterColor,
 				shape: child.id? "box":"circle"
 			});
+			// show arrow and label only on edges starting at the node in focus (parentId==0),
+			// but not for those in a cluster:
 			let edge = {
 				from: inbound? childId:parentId,
 				to: inbound? parentId:childId,
 				arrows: parentId==0? "to":"",
 				color: opts.edgeColor,
-				label: rel.title? getStatementTitle(rel):""
+				label: parentId==0? getStatementTitle(rel):""
 			};
 			if( rel.id ) edge.id = rel.id;
 			edgeData.push( edge )
