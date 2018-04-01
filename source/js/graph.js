@@ -1,6 +1,7 @@
 /**
  * Created by baetz on 27.04.2017.
  * Updated by se@enso-managers.de on 2018-03-14
+ * Accepts data-sets according to v0.10.4 or v0.11.2 and later.
  */
 define([ "vis" ], function (vis) {
 
@@ -377,9 +378,9 @@ define([ "vis" ], function (vis) {
 			if( res.properties ) {
 				for (var n=0; n<res.properties.length; n++)
 					if (opts.titleProperties.includes(res.properties[n].title))
-						return getIconForResourceClass(res.resourceClass) + xmlChar2utf8(res.properties[n].value)
+						return getIconForResourceClass(res['class']) + xmlChar2utf8(res.properties[n].value)
             };
-            if( res.title ) return getIconForResourceClass(res.resourceClass) + xmlChar2utf8(res.title);
+            if( res.title ) return getIconForResourceClass(res['class']) + xmlChar2utf8(res.title);
             return undefined
         }
 
@@ -401,7 +402,7 @@ define([ "vis" ], function (vis) {
 			if( specifData.statementClasses ) {
 				let i = specifData.statementClasses.length;
 				while (i--) {
-					if (specifData.statementClasses[i].id === stm.statementClass)
+					if (specifData.statementClasses[i].id === stm['class'])
 						return xmlChar2utf8(specifData.statementClasses[i].title)
 				}
 			};
@@ -494,7 +495,7 @@ define([ "vis" ], function (vis) {
 					// all statements having the same title are clustered:
 					let stmC = getStatementTitle(specifData.statements[i]);
 					// all statements having the same class are clustered:
-//					let stmC = specifData.statements[i].statementClass;
+//					let stmC = specifData.statements[i]['class'];
 					if (!stms[stmC]) {
 						stms[stmC] = {
 							targets: [],
