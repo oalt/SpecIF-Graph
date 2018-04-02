@@ -8,7 +8,7 @@ define([
     return {
         "id": "ACP-59c8a7730000bca80137509a49b1218b",
         "title": "Dimmer - Semantically Integrated Specification (2016-05-12)",
-        "specifVersion": "0.9.2",
+        "specifVersion": "0.10.4",
         "tool": "Interactive-Spec",
         "toolVersion": "0.92.31",
         "rights": {
