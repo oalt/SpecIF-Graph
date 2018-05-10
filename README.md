@@ -20,4 +20,4 @@ Draws a neighborhood graph of a given [SpecIF](http://specif.de) resource. Input
 Many thanks to 
 - author marcusbaetz. 
 - the makers of the fabulous library [vis.js](https://github.com/almende/vis)
-- This work has also been sponsored by [adesso AG](http://adesso.de), Berlin.
+- This work has been sponsored by [adesso AG](http://adesso.de), Berlin.
