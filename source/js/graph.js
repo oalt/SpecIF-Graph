@@ -485,11 +485,11 @@ define([ "vis" ], function (vis) {
          * @returns json object of the statements with titles for statements, subjects and objects
          */
         function collectStatementsByType(res) {
-            let stms = {};
+            let stms = {}, oid=null, sid=null;
             for (var i=0; i<specifData.statements.length; i++) {
 				// SpecIF v0.10.x: subject/object without revision, v0.11.y: with revision
-				let oid = specifData.statements[i].object.id || specifData.statements[i].object,
-					sid = specifData.statements[i].subject.id || specifData.statements[i].subject;
+				oid = specifData.statements[i].object.id || specifData.statements[i].object;
+				sid = specifData.statements[i].subject.id || specifData.statements[i].subject;
 				
 				if ( sid === res.id || oid === res.id) {
 					// all statements having the same title are clustered:
@@ -497,10 +497,7 @@ define([ "vis" ], function (vis) {
 					// all statements having the same class are clustered:
 //					let stmC = specifData.statements[i]['class'];
 					if (!stms[stmC]) {
-						stms[stmC] = {
-							targets: [],
-							sources: []
-                        }
+						stms[stmC] = { targets: [], sources: [] }
 					};
 					if ( oid===res.id )
 						stms[stmC].sources.push( {resource:resourceById(sid),statement:specifData.statements[i]} )
