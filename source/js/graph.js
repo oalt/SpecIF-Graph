@@ -7,7 +7,7 @@ define([ "vis" ], function (vis) {
 
     function init(specifData,opts) {
 //		console.debug('init input',specifData,opts);
-
+		// Accepts data-sets according to v0.10.4 or v0.11.2 and later.
 		// Check for missing options:
 		if ( !opts
 			|| !opts.canvas
@@ -79,6 +79,7 @@ define([ "vis" ], function (vis) {
 
 		let network = new vis.Network(container, data, options);
 		// Collapse/close a 'large' sub-network:
+		// see https://github.com/GfSE/SpecIF-Graph/blob/master/source/js/graph.js
 		network.getConnectedNodes("0").forEach(function (connectedNode) {
 			let neighbours = network.getConnectedNodes(connectedNode);
 			if (neighbours.length > 5) {
@@ -90,7 +91,7 @@ define([ "vis" ], function (vis) {
 			if (prms.nodes.length === 1) {
 				if( prms.nodes[0] == 0 ) return;  // no action for the node in focus
 				if( !isIE() && 
-					(typeof opts.onDoubleClick === "function") &&
+					(typeof(opts.onDoubleClick)==="function") &&
 					network.getConnectedNodes(prms.nodes[0]).length === 1 &&
 					!network.clustering.isCluster(prms.nodes[0])) {
 					// it is a peripheral node with a single edge,
@@ -99,7 +100,7 @@ define([ "vis" ], function (vis) {
 					opts.onDoubleClick({target:{resource:nId,statement:prms.edges[0]}});
 					return
 				};
-				if (typeof prms.nodes[0] === "string" && prms.nodes[0].includes(":")) {
+				if (typeof(prms.nodes[0])==="string" && prms.nodes[0].includes(":")) {
 					if (!network.clustering.isCluster(prms.nodes[0])) return
 				};
 				// else, open or close the cluster depending in its state:
@@ -142,7 +143,7 @@ define([ "vis" ], function (vis) {
 				}
 			}
 		});
-
+		return		// we're done ...
         /**
          * This function closes a given cluster
          * @param node A node that is a cluster
