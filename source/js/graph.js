@@ -5,7 +5,7 @@
  */
 define([ "vis" ], function (vis) {
 
-    function init(specifData,opts) {
+    function init( specifData, opts ) {
 //		console.debug('init input',specifData,opts);
 		// Accepts data-sets according to v0.10.4 or v0.11.2 and later.
 		// Check for missing options:
@@ -31,13 +31,13 @@ define([ "vis" ], function (vis) {
 
 		let relProp = countRelationTypesAndEdges(relations);
 		let idx = pushMainNode( specifData.resources[opts.index] );  // returns always 1
-		for (var entry in relations) {
+		for(var entry in relations) {
 			// an iteration per relation type,
 			// first the inbound relations, i.e. where the node in focus is target:
 			if (relations.hasOwnProperty(entry) && relations[entry].sources.length )
 					idx = pushChildNodesAndEdges(idx, relations[entry].sources, relProp, true)
 		};
-		for (var entry in relations) {
+		for(var entry in relations) {
 			// an iteration per relation type,
 			// then the outbound relations, i.e. where the node in focus is source:
 			if (relations.hasOwnProperty(entry) && relations[entry].targets.length )
@@ -111,7 +111,7 @@ define([ "vis" ], function (vis) {
 							let dist, offset;
 							let i = 0;
 							let length = Object.keys(containedNodesPositions).length - 1;
-							for (let id in containedNodesPositions) {
+							for(let id in containedNodesPositions) {
 								if (containedNodesPositions.hasOwnProperty(id)) {
 									if (id === "0" || (!containedNodesPositions["0"] && !id.includes(":"))) {
 										newPositions[id] = {x: clusterPosition.x, y: clusterPosition.y};
@@ -364,7 +364,7 @@ define([ "vis" ], function (vis) {
          */
         function getIconForResourceClass(type) {
 			if( specifData.resourceClasses )
-				for (var i = specifData.resourceClasses.length-1; i>-1; i--)
+				for(var i = specifData.resourceClasses.length-1; i>-1; i--)
 					if (specifData.resourceClasses[i].id === type)
 						return specifData.resourceClasses[i].icon ? xmlChar2utf8(specifData.resourceClasses[i].icon) + " " : "";
 			return ""
@@ -377,7 +377,7 @@ define([ "vis" ], function (vis) {
          */
         function getResourceTitle(res) {
 			if( res.properties ) {
-				for (var n=0; n<res.properties.length; n++)
+				for(var n=0; n<res.properties.length; n++)
 					if (opts.titleProperties.includes(res.properties[n].title))
 						return getIconForResourceClass(res['class']) + xmlChar2utf8(res.properties[n].value)
             };
@@ -393,7 +393,7 @@ define([ "vis" ], function (vis) {
         function getStatementTitle(stm) {
 			// Try to get it from a title property:
 			if( stm.properties ) {
-				for (var n=0; n<stm.properties.length; n++)
+				for(var n=0; n<stm.properties.length; n++)
 					if (opts.titleProperties.includes(stm.properties[n].title))
 						return xmlChar2utf8(stm.properties[n].value)
             };
@@ -416,12 +416,12 @@ define([ "vis" ], function (vis) {
          * @returns the item for the id or undefined if there is none
          */
         function resourceById(id) {
-            for (var i = specifData.resources.length-1; i>-1; i--)
+            for(var i = specifData.resources.length-1; i>-1; i--)
                 if (specifData.resources[i].id === id) return specifData.resources[i];
 			return undefined
         }
         function statementById(id) {
-            for (var i = specifData.statements.length-1; i>-1; i--)
+            for(var i = specifData.statements.length-1; i>-1; i--)
                 if (specifData.statements[i].id === id) return specifData.statements[i];
 			return undefined
         }
@@ -468,7 +468,7 @@ define([ "vis" ], function (vis) {
          */
         function countRelationTypesAndEdges(rels) {
             let cnt = {types: 0, sources: 0, targets: 0};
-            for (let entry in rels) {
+            for(let entry in rels) {
                 if (rels.hasOwnProperty(entry)) {
                         if (rels[entry].targets.length) cnt.targets++;
                         if (rels[entry].sources.length) cnt.sources++;
@@ -487,25 +487,25 @@ define([ "vis" ], function (vis) {
          */
         function collectStatementsByType(res) {
             let stms = {}, oid=null, sid=null;
-            for (var i=0; i<specifData.statements.length; i++) {
+            specifData.statements.forEach( function(st) {
 				// SpecIF v0.10.x: subject/object without revision, v0.11.y: with revision
-				oid = specifData.statements[i].object.id || specifData.statements[i].object;
-				sid = specifData.statements[i].subject.id || specifData.statements[i].subject;
+				oid = st.object.id || st.object;
+				sid = st.subject.id || st.subject;
 				
 				if ( sid === res.id || oid === res.id) {
 					// all statements having the same title are clustered:
-					let stmC = getStatementTitle(specifData.statements[i]);
+					let stmC = getStatementTitle(st);
 					// all statements having the same class are clustered:
-//					let stmC = specifData.statements[i]['class'];
+//					let stmC = st['class'];
 					if (!stms[stmC]) {
 						stms[stmC] = { targets: [], sources: [] }
 					};
 					if ( oid===res.id )
-						stms[stmC].sources.push( {resource:resourceById(sid),statement:specifData.statements[i]} )
+						stms[stmC].sources.push( {resource:resourceById(sid),statement:st} )
 					else
-						stms[stmC].targets.push( {resource:resourceById(oid),statement:specifData.statements[i]} )
+						stms[stmC].targets.push( {resource:resourceById(oid),statement:st} )
 				}
-            };
+            });
             return stms
         }
 
