@@ -34,14 +34,16 @@ define([ "vis" ], function (vis) {
 		for(var entry in relations) {
 			// an iteration per relation type,
 			// first the inbound relations, i.e. where the node in focus is target:
-			if (relations.hasOwnProperty(entry) && relations[entry].sources.length )
-					idx = pushChildNodesAndEdges(idx, relations[entry].sources, relProp, true)
+			if (relations.hasOwnProperty(entry) && relations[entry].sources.length) {
+				idx = pushChildNodesAndEdges(idx, relations[entry].sources, relProp, true);
+			}
 		};
 		for(var entry in relations) {
 			// an iteration per relation type,
 			// then the outbound relations, i.e. where the node in focus is source:
-			if (relations.hasOwnProperty(entry) && relations[entry].targets.length )
-					idx = pushChildNodesAndEdges(idx, relations[entry].targets, relProp, false)
+			if (relations.hasOwnProperty(entry) && relations[entry].targets.length) {
+				idx = pushChildNodesAndEdges(idx, relations[entry].targets, relProp, false);
+			}
 		};
 //		console.debug('rawData',nodesData,edgeData);
 		let nodes = new vis.DataSet(nodesData);
@@ -52,6 +54,7 @@ define([ "vis" ], function (vis) {
 			nodes: nodes,
 			edges: edges
 		};
+
 		let options = {
 			autoResize: true,
 			height: '100%',
@@ -143,7 +146,8 @@ define([ "vis" ], function (vis) {
 				}
 			}
 		});
-		return		// we're done ...
+		return;		// we're done ...
+
         /**
          * This function closes a given cluster
          * @param node A node that is a cluster
@@ -152,7 +156,7 @@ define([ "vis" ], function (vis) {
         function closeCluster(node, network) {
             if (node === 0) {
                 network.getConnectedNodes("0").forEach(function (connectedNode) {
-                    closeCluster(connectedNode, network)
+					closeCluster(connectedNode, network);
                 })
             };
             let options = {
@@ -165,7 +169,7 @@ define([ "vis" ], function (vis) {
                     shape: "diamond"
                 }
             };
-            network.clustering.clusterByConnection(node, options)
+			network.clustering.clusterByConnection(node, options);
         } 
 
         /**
@@ -187,19 +191,19 @@ define([ "vis" ], function (vis) {
 				if( words[i].length>maxLen ) {
 					part = words[i].slice(Math.round(words[i].length/2));
 					words.splice(i+1,0,part);  // insert second part
-					words[i] = words[i].slice(0,Math.round(words[i].length/2)) +'-'  // update first part
+					words[i] = words[i].slice(0, Math.round(words[i].length / 2)) + '-';  // update first part
 				};
 				// combine words to lines with length<maxLen:
 				if( (lineLength+words[i].length)<maxLen ) {
 					out += words[i];
-					lineLength += words[i].length
+					lineLength += words[i].length;
 				}
 				else {
 					out += newLine + words[i];
-					lineLength = words[i].length
+					lineLength = words[i].length;
 				}
 			};
-			return out
+			return out;
         }
 
         /**
@@ -209,7 +213,7 @@ define([ "vis" ], function (vis) {
          */
         function testWhite(x) {
             let white = new RegExp(/^\s$/);
-            return white.test(x.charAt(0))
+			return white.test(x.charAt(0));
         }
 
         /**
@@ -235,7 +239,7 @@ define([ "vis" ], function (vis) {
 			pos.y = parentPos.y + r * Math.sin(alpha);
 			pos.alpha = alpha;
 //			console.debug('calculateNodePosition',i,alpha)
-			return pos
+			return pos;
 		}
 
         /**
@@ -271,7 +275,7 @@ define([ "vis" ], function (vis) {
 					pos,
 					children[0].statement,
 					inbound);
-				idx++
+				idx++;
             } 
 			else {
 				// there are several nodes related by the same type and same direction,
@@ -297,7 +301,7 @@ define([ "vis" ], function (vis) {
 					pushNodeAndEdge(childIDString, idx, child.resource, childPos, child.statement, false);
 					childID++
 				});
-				idx++
+				idx++;
 			};
 			return idx
         }
@@ -332,7 +336,8 @@ define([ "vis" ], function (vis) {
 				to: inbound? parentId:childId,
 				arrows: parentId==0? "to":"",
 				color: opts.edgeColor,
-				label: parentId==0? getStatementTitle(rel):""
+				label: parentId==0 ? getStatementTitle(rel):""
+				//label: getStatementTitle(rel)
 			};
 			if( rel.id ) edge.id = rel.id;
 			edgeData.push( edge )
@@ -362,28 +367,52 @@ define([ "vis" ], function (vis) {
          * @param type resource type
          * @returns {string} The resource icon or an empty string
          */
-        function getIconForResourceClass(type) {
-			if( specifData.resourceClasses )
-				for(var i = specifData.resourceClasses.length-1; i>-1; i--)
-					if (specifData.resourceClasses[i].id === type)
+		function getIconForResourceClass(type) {
+			if (specifData.resourceClasses) {
+				for (var i = specifData.resourceClasses.length - 1; i > -1; i--) {
+					if (specifData.resourceClasses[i].id === type) {
 						return specifData.resourceClasses[i].icon ? xmlChar2utf8(specifData.resourceClasses[i].icon) + " " : "";
+					}
+				}
+			}
 			return ""
-        }
+		}
 
         /**
          * Returns a string representing the title of a resource with the given id.
          * @param id the id of a resource
          * @returns {string} title of the resource with icon, if available
          */
-        function getResourceTitle(res) {
-			if( res.properties ) {
-				for(var n=0; n<res.properties.length; n++)
-					if (opts.titleProperties.includes(res.properties[n].title))
-						return getIconForResourceClass(res['class']) + xmlChar2utf8(res.properties[n].value)
-            };
-            if( res.title ) return getIconForResourceClass(res['class']) + xmlChar2utf8(res.title);
-            return undefined
-        }
+		function getResourceTitle(res) {
+			if (res.properties) {
+				for (var n = 0; n < res.properties.length; n++) {
+					if (opts.titleProperties.includes(res.properties[n].title)) {
+						return getIconForResourceClass(res['class']) + getResourceTypeString(res) + "\r\n" + xmlChar2utf8(res.properties[n].value[0].text)
+					}
+				}
+			}
+			if (res.title) {
+				return getIconForResourceClass(res['class']) + xmlChar2utf8(res.title);
+			}
+			else {
+				return undefined
+			}
+		}
+
+		function getResourceTypeString(resource) {
+			let result = "";
+			if (resource.properties) {
+				for (var n = 0; n < resource.properties.length; n++) {
+					if (resource.properties[n].title === "dcterms:type") {
+						result = "[" + resource.properties[n].value[0].text + "]";
+						break;
+					}
+				}
+				
+			}
+
+			return result;
+		}
 
         /**
          * Returns the title for a given statement
@@ -391,23 +420,52 @@ define([ "vis" ], function (vis) {
          * @returns the title of the statement.
          */
         function getStatementTitle(stm) {
+
+			let result = "";
+
 			// Try to get it from a title property:
 			if( stm.properties ) {
-				for(var n=0; n<stm.properties.length; n++)
-					if (opts.titleProperties.includes(stm.properties[n].title))
-						return xmlChar2utf8(stm.properties[n].value)
+				for (var n = 0; n < stm.properties.length; n++) {
+					if (opts.titleProperties.includes(stm.properties[n].title)) {
+						let text = xmlChar2utf8(stm.properties[n].value[0].text);
+						if (text !== "") {
+							result = text;
+							break;
+						}
+						else {
+							break;
+						}
+					}
+				}
             };
 			// else, try:
-            if( stm.title ) return xmlChar2utf8(stm.title);
+			if (stm.title) {
+				result = xmlChar2utf8(stm.title);
+			}
+
 			// finally, get it from the class:
 			if( specifData.statementClasses ) {
 				let i = specifData.statementClasses.length;
 				while (i--) {
-					if (specifData.statementClasses[i].id === stm['class'])
-						return xmlChar2utf8(specifData.statementClasses[i].title)
+					if (specifData.statementClasses[i].id === stm['class']) {
+						result = xmlChar2utf8(specifData.statementClasses[i].title);
+					}
 				}
 			};
-            return undefined
+
+			if (result === "UML:Relationship") {
+				let typeString = "";
+
+				for (var n = 0; n < stm.properties.length; n++) {
+					if (stm.properties[n].title === "dcterms:type") {
+						typeString = xmlChar2utf8(stm.properties[n].value[0].text);
+						break;
+					}
+				}
+
+				result += "\r\n" + typeString;
+			}
+			return result;
         }
 
         /**
@@ -416,14 +474,21 @@ define([ "vis" ], function (vis) {
          * @returns the item for the id or undefined if there is none
          */
         function resourceById(id) {
-            for(var i = specifData.resources.length-1; i>-1; i--)
-                if (specifData.resources[i].id === id) return specifData.resources[i];
-			return undefined
-        }
+			for (var i = specifData.resources.length - 1; i > -1; i--) {
+				if (specifData.resources[i].id === id) {
+					return specifData.resources[i];
+				}
+			}
+			return undefined;
+		}
+		
         function statementById(id) {
-            for(var i = specifData.statements.length-1; i>-1; i--)
-                if (specifData.statements[i].id === id) return specifData.statements[i];
-			return undefined
+			for (var i = specifData.statements.length - 1; i > -1; i--) {
+				if (specifData.statements[i].id === id) {
+					return specifData.statements[i];
+				}
+			}
+			return undefined;
         }
 
         /**
@@ -450,10 +515,10 @@ define([ "vis" ], function (vis) {
          */
         function xmlChar2utf8 (str) {
 			str = str.replace(/&#x([0-9a-fA-F]+);/g, function (match, numStr) {
-                return String.fromCharCode(parseInt(numStr, 16))
+				return String.fromCharCode(parseInt(numStr, 16));
             });
             return str.replace(/&#([0-9]+);/g, function (match, numStr) {
-                return String.fromCharCode(parseInt(numStr, 10))
+				return String.fromCharCode(parseInt(numStr, 10));
             })
         }
 
@@ -472,11 +537,11 @@ define([ "vis" ], function (vis) {
                 if (rels.hasOwnProperty(entry)) {
                         if (rels[entry].targets.length) cnt.targets++;
                         if (rels[entry].sources.length) cnt.sources++;
-                        cnt.types++
+					cnt.types++;
                 }
             };
 //			console.debug('countRelationTypesAndEdges',rels,cnt);
-            return cnt
+			return cnt;
         }
 
         /**
@@ -487,23 +552,26 @@ define([ "vis" ], function (vis) {
          */
         function collectStatementsByType(res) {
             let stms = {}, oid=null, sid=null;
-            specifData.statements.forEach( function(st) {
+			specifData.statements.forEach( function(st) {
 				// SpecIF v0.10.x: subject/object without revision, v0.11.y: with revision
-				oid = st.object.id || st.object;
-				sid = st.subject.id || st.subject;
+				objectID = st.object.id || st.object;
+				subjectID = st.subject.id || st.subject;
 				
-				if ( sid === res.id || oid === res.id) {
+				if (subjectID === res.id || objectID === res.id) {
 					// all statements having the same title are clustered:
 					let stmC = getStatementTitle(st);
 					// all statements having the same class are clustered:
-//					let stmC = st['class'];
+					//let stmC = st['class'].id;
 					if (!stms[stmC]) {
 						stms[stmC] = { targets: [], sources: [] }
-					};
-					if ( oid===res.id )
-						stms[stmC].sources.push( {resource:resourceById(sid),statement:st} )
-					else
-						stms[stmC].targets.push( {resource:resourceById(oid),statement:st} )
+					}
+
+					if (objectID === res.id) {
+						stms[stmC].sources.push({ resource: resourceById(subjectID), statement: st });
+					}
+					else {
+						stms[stmC].targets.push({ resource: resourceById(objectID), statement: st });
+					}
 				}
             });
             return stms
