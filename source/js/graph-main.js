@@ -3,13 +3,29 @@
  */
 
 require(["config"], function() {
-    require([ "graph", "jquery","specIFData"], function(graph,$,specIFData) {
+    require([ "graph", "jquery"], function(graph,$) {
 ////////////////////////////////////////////////////
         //Mit Slider, der slider erhält eine range zwischen dem kleinsten Index und dem größten Index
-        //Mann kann hier schnell durch alle Indizes durch wechseln
+		//Mann kann hier schnell durch alle Indizes durch wechseln
+		
+		let specIFData = (function () {
+			var json = null;
+			$.ajax({
+				'async': false,
+				'global': false,
+				'url': "./TestModel1.specif",
+				'dataType': "json",
+				'success': function (data) {
+					json = data;
+				}
+			});
+			return json;
+		})();
+
         let max = specIFData.resources.length-1;
         let slider =  $("#slider");
 		let specif = specIFData;
+
 		let options = {
 			canvas:'specifGraph',
 			index: slider.val(),
