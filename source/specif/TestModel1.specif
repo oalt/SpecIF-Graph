@@ -1,0 +1,1430 @@
+{
+  "id": "10adeae4-a124-4177-ac3e-d4b87cdaf944",
+  "title": "UML data extracted from Sparx Enterprise Architect: TestModel1.eap",
+  "specifVersion": "0.11.7",
+  "generator": "SpecIFicator",
+  "createdAt": "2019-04-04T22:54:32.1845414+02:00",
+  "dataTypes": [],
+  "propertyClasses": [],
+  "resourceClasses": [],
+  "statementClasses": [],
+  "resources": [
+    {
+      "id": "45A143E0_D43A_4f51_ACA6_FF695EEE3256",
+      "revision": 1,
+      "title": "Test Model 1",
+      "class": {
+        "id": "RC-UML_Package",
+        "revision": 1
+      },
+      "properties": [
+        {
+          "id": "45A143E0_D43A_4f51_ACA6_FF695EEE3256_NAME",
+          "revision": 1,
+          "title": "dcterms:title",
+          "value": [
+            {
+              "text": "Test Model 1",
+              "language": "en-EN"
+            }
+          ],
+          "class": {
+            "id": "PC-Name",
+            "revision": 1
+          },
+          "changedAt": "2019-03-27T21:52:20",
+          "changedBy": "olli"
+        },
+        {
+          "id": "45A143E0_D43A_4f51_ACA6_FF695EEE3256_NOTES",
+          "revision": 1,
+          "title": "dcterms:description",
+          "value": [
+            {
+              "text": "",
+              "language": "en-EN"
+            }
+          ],
+          "class": {
+            "id": "PC-Text",
+            "revision": 1
+          },
+          "changedAt": "2019-03-27T21:52:20",
+          "changedBy": "olli"
+        },
+        {
+          "id": "45A143E0_D43A_4f51_ACA6_FF695EEE3256_STEREOTYPE",
+          "revision": 1,
+          "title": "SpecIF:Stereotype",
+          "value": [
+            {
+              "text": "",
+              "language": "en-EN"
+            }
+          ],
+          "class": {
+            "id": "PC-Stereotype",
+            "revision": 1
+          },
+          "changedAt": "2019-03-27T21:52:20",
+          "changedBy": "olli"
+        },
+        {
+          "id": "{45A143E0-D43A-4f51-ACA6-FF695EEE3256}",
+          "revision": 1,
+          "title": "UML:VisibilityKind",
+          "value": [
+            {
+              "text": "V-UML_VisibilityKind-0",
+              "language": "en-EN"
+            }
+          ],
+          "class": {
+            "id": "PC-UML_VisibilityKind",
+            "revision": 1
+          },
+          "changedAt": "2019-03-27T21:52:20",
+          "changedBy": "olli"
+        }
+      ],
+      "changedAt": "2019-03-27T21:52:20",
+      "changedBy": "olli"
+    },
+    {
+      "id": "E5BE02CD_7270_4d3a_BBBA_B4D9CE542A7E",
+      "revision": 1,
+      "title": "Diagrams",
+      "class": {
+        "id": "RC-UML_Package",
+        "revision": 1
+      },
+      "properties": [
+        {
+          "id": "E5BE02CD_7270_4d3a_BBBA_B4D9CE542A7E_NAME",
+          "revision": 1,
+          "title": "dcterms:title",
+          "value": [
+            {
+              "text": "Diagrams",
+              "language": "en-EN"
+            }
+          ],
+          "class": {
+            "id": "PC-Name",
+            "revision": 1
+          },
+          "changedAt": "2019-03-31T23:15:47",
+          "changedBy": "olli"
+        },
+        {
+          "id": "E5BE02CD_7270_4d3a_BBBA_B4D9CE542A7E_NOTES",
+          "revision": 1,
+          "title": "dcterms:description",
+          "value": [
+            {
+              "text": "",
+              "language": "en-EN"
+            }
+          ],
+          "class": {
+            "id": "PC-Text",
+            "revision": 1
+          },
+          "changedAt": "2019-03-31T23:15:47",
+          "changedBy": "olli"
+        },
+        {
+          "id": "E5BE02CD_7270_4d3a_BBBA_B4D9CE542A7E_STEREOTYPE",
+          "revision": 1,
+          "title": "SpecIF:Stereotype",
+          "value": [
+            {
+              "text": "diagrams",
+              "language": "en-EN"
+            }
+          ],
+          "class": {
+            "id": "PC-Stereotype",
+            "revision": 1
+          },
+          "changedAt": "2019-03-31T23:15:47",
+          "changedBy": "olli"
+        },
+        {
+          "id": "{E5BE02CD-7270-4d3a-BBBA-B4D9CE542A7E}",
+          "revision": 1,
+          "title": "UML:VisibilityKind",
+          "value": [
+            {
+              "text": "V-UML_VisibilityKind-0",
+              "language": "en-EN"
+            }
+          ],
+          "class": {
+            "id": "PC-UML_VisibilityKind",
+            "revision": 1
+          },
+          "changedAt": "2019-03-31T23:15:47",
+          "changedBy": "olli"
+        }
+      ],
+      "changedAt": "2019-03-31T23:15:47",
+      "changedBy": "olli"
+    },
+    {
+      "id": "BF30DD09_E13E_451b_B210_786F93A74936",
+      "revision": 1,
+      "title": "Test Model 1",
+      "class": {
+        "id": "RC-Diagram",
+        "revision": 1
+      },
+      "properties": [
+        {
+          "id": "BF30DD09_E13E_451b_B210_786F93A74936_NAME",
+          "revision": 1,
+          "title": "dcterms:title",
+          "value": [
+            {
+              "text": "Test Model 1",
+              "language": "en-EN"
+            }
+          ],
+          "class": {
+            "id": "PC-Name",
+            "revision": 1
+          },
+          "changedAt": "2019-03-31T22:48:55",
+          "changedBy": "olli"
+        },
+        {
+          "id": "BF30DD09_E13E_451b_B210_786F93A74936_NOTES",
+          "revision": 1,
+          "title": "dcterms:description",
+          "value": [
+            {
+              "text": "<p><img src=\"data:image/png;base64,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\" /></p>\r\n<p></p>",
+              "language": "en-EN"
+            }
+          ],
+          "class": {
+            "id": "PC-Text",
+            "revision": 1
+          },
+          "changedAt": "2019-03-31T22:48:55",
+          "changedBy": "olli"
+        },
+        {
+          "id": "BF30DD09_E13E_451b_B210_786F93A74936_NOTATION",
+          "revision": 1,
+          "title": "SpecIF:Notation",
+          "value": [
+            {
+              "text": "OMG:UML:2.5.1:Class Diagram",
+              "language": "en-EN"
+            }
+          ],
+          "class": {
+            "id": "PC-Notation",
+            "revision": 1
+          },
+          "changedAt": "2019-03-31T22:48:55",
+          "changedBy": "olli"
+        }
+      ],
+      "changedAt": "2019-03-31T22:48:55",
+      "changedBy": "olli"
+    },
+    {
+      "id": "DFE23489_5962_5859_B375_9AA62757FD18",
+      "revision": 1,
+      "title": "Multiplicity",
+      "class": {
+        "id": "RC-UML_ActiveElement",
+        "revision": 1
+      },
+      "properties": [
+        {
+          "id": "DFE23489_5962_5859_B375_9AA62757FD18_NAME",
+          "revision": 1,
+          "title": "dcterms:title",
+          "value": [
+            {
+              "text": "Multiplicity",
+              "language": "en-EN"
+            }
+          ],
+          "class": {
+            "id": "PC-Name",
+            "revision": 1
+          },
+          "changedAt": "2019-03-31T22:54:32",
+          "changedBy": "olli"
+        },
+        {
+          "id": "DFE23489_5962_5859_B375_9AA62757FD18_NOTES",
+          "revision": 1,
+          "title": "dcterms:description",
+          "value": [
+            {
+              "text": "Values: Single,Multiple\r\nDefault: Single\r\n",
+              "language": "en-EN"
+            }
+          ],
+          "class": {
+            "id": "PC-Text",
+            "revision": 1
+          },
+          "changedAt": "2019-03-31T22:54:32",
+          "changedBy": "olli"
+        },
+        {
+          "id": "DFE23489_5962_5859_B375_9AA62757FD18_TYPE",
+          "revision": 1,
+          "title": "dcterms:type",
+          "value": [
+            {
+              "text": "OMG:UML:2.5.1:TaggedValue",
+              "language": "en-EN"
+            }
+          ],
+          "class": {
+            "id": "PC-Type",
+            "revision": 1
+          },
+          "changedAt": "2019-03-31T22:54:32",
+          "changedBy": "olli"
+        },
+        {
+          "id": "DFE23489_5962_5859_B375_9AA62757FD18_VALUE",
+          "revision": 1,
+          "title": "rdf:value",
+          "value": [
+            {
+              "text": "Single",
+              "language": "en-EN"
+            }
+          ],
+          "class": {
+            "id": "PC-Value",
+            "revision": 1
+          },
+          "changedAt": "2019-03-31T22:54:32",
+          "changedBy": "olli"
+        },
+        {
+          "id": "DFE23489_5962_5859_B375_9AA62757FD18_STEREOTYPE",
+          "revision": 1,
+          "title": "SpecIF:Stereotype",
+          "value": [
+            {
+              "text": "FMC4SE:agent",
+              "language": "en-EN"
+            }
+          ],
+          "class": {
+            "id": "PC-Stereotype",
+            "revision": 1
+          },
+          "changedAt": "2019-03-31T22:54:32",
+          "changedBy": "olli"
+        }
+      ],
+      "changedAt": "2019-03-31T22:54:32",
+      "changedBy": "olli"
+    },
+    {
+      "id": "0041AD82_095B_1109_8B25_4A31B2420F57",
+      "revision": 1,
+      "title": "Type",
+      "class": {
+        "id": "RC-UML_ActiveElement",
+        "revision": 1
+      },
+      "properties": [
+        {
+          "id": "0041AD82_095B_1109_8B25_4A31B2420F57_NAME",
+          "revision": 1,
+          "title": "dcterms:title",
+          "value": [
+            {
+              "text": "Type",
+              "language": "en-EN"
+            }
+          ],
+          "class": {
+            "id": "PC-Name",
+            "revision": 1
+          },
+          "changedAt": "2019-03-31T22:54:32",
+          "changedBy": "olli"
+        },
+        {
+          "id": "0041AD82_095B_1109_8B25_4A31B2420F57_NOTES",
+          "revision": 1,
+          "title": "dcterms:description",
+          "value": [
+            {
+              "text": "Values: Standard,Software,Chain,Electronic,Mechanical\r\nDefault: Standard\r\n",
+              "language": "en-EN"
+            }
+          ],
+          "class": {
+            "id": "PC-Text",
+            "revision": 1
+          },
+          "changedAt": "2019-03-31T22:54:32",
+          "changedBy": "olli"
+        },
+        {
+          "id": "0041AD82_095B_1109_8B25_4A31B2420F57_TYPE",
+          "revision": 1,
+          "title": "dcterms:type",
+          "value": [
+            {
+              "text": "OMG:UML:2.5.1:TaggedValue",
+              "language": "en-EN"
+            }
+          ],
+          "class": {
+            "id": "PC-Type",
+            "revision": 1
+          },
+          "changedAt": "2019-03-31T22:54:32",
+          "changedBy": "olli"
+        },
+        {
+          "id": "0041AD82_095B_1109_8B25_4A31B2420F57_VALUE",
+          "revision": 1,
+          "title": "rdf:value",
+          "value": [
+            {
+              "text": "Standard",
+              "language": "en-EN"
+            }
+          ],
+          "class": {
+            "id": "PC-Value",
+            "revision": 1
+          },
+          "changedAt": "2019-03-31T22:54:32",
+          "changedBy": "olli"
+        },
+        {
+          "id": "0041AD82_095B_1109_8B25_4A31B2420F57_STEREOTYPE",
+          "revision": 1,
+          "title": "SpecIF:Stereotype",
+          "value": [
+            {
+              "text": "FMC4SE:agent",
+              "language": "en-EN"
+            }
+          ],
+          "class": {
+            "id": "PC-Stereotype",
+            "revision": 1
+          },
+          "changedAt": "2019-03-31T22:54:32",
+          "changedBy": "olli"
+        }
+      ],
+      "changedAt": "2019-03-31T22:54:32",
+      "changedBy": "olli"
+    },
+    {
+      "id": "78AB624B_521C_4c07_B11D_82354B8A5BB2",
+      "revision": 1,
+      "title": "VW",
+      "class": {
+        "id": "RC-UML_ActiveElement",
+        "revision": 1
+      },
+      "properties": [
+        {
+          "id": "78AB624B_521C_4c07_B11D_82354B8A5BB2_NAME",
+          "revision": 1,
+          "title": "dcterms:title",
+          "value": [
+            {
+              "text": "VW",
+              "language": "en-EN"
+            }
+          ],
+          "class": {
+            "id": "PC-Name",
+            "revision": 1
+          },
+          "changedAt": "2019-03-31T22:54:32",
+          "changedBy": "olli"
+        },
+        {
+          "id": "78AB624B_521C_4c07_B11D_82354B8A5BB2_NOTES",
+          "revision": 1,
+          "title": "dcterms:description",
+          "value": [
+            {
+              "text": "",
+              "language": "en-EN"
+            }
+          ],
+          "class": {
+            "id": "PC-Text",
+            "revision": 1
+          },
+          "changedAt": "2019-03-31T22:54:32",
+          "changedBy": "olli"
+        },
+        {
+          "id": "78AB624B_521C_4c07_B11D_82354B8A5BB2_STEREOTYPE",
+          "revision": 1,
+          "title": "SpecIF:Stereotype",
+          "value": [
+            {
+              "text": "FMC4SE:agent",
+              "language": "en-EN"
+            }
+          ],
+          "class": {
+            "id": "PC-Stereotype",
+            "revision": 1
+          },
+          "changedAt": "2019-03-31T22:54:32",
+          "changedBy": "olli"
+        },
+        {
+          "id": "78AB624B_521C_4c07_B11D_82354B8A5BB2_TYPE",
+          "revision": 1,
+          "title": "dcterms:type",
+          "value": [
+            {
+              "text": "OMG:UML:2.5.1:Object",
+              "language": "en-EN"
+            }
+          ],
+          "class": {
+            "id": "PC-Type",
+            "revision": 1
+          },
+          "changedAt": "2019-03-31T22:54:32",
+          "changedBy": "olli"
+        },
+        {
+          "id": "{78AB624B-521C-4c07-B11D-82354B8A5BB2}",
+          "revision": 1,
+          "title": "UML:VisibilityKind",
+          "value": [
+            {
+              "text": "V-UML_VisibilityKind-0",
+              "language": "en-EN"
+            }
+          ],
+          "class": {
+            "id": "PC-UML_VisibilityKind",
+            "revision": 1
+          },
+          "changedAt": "2019-03-31T22:54:32",
+          "changedBy": "olli"
+        }
+      ],
+      "changedAt": "2019-03-31T22:54:32",
+      "changedBy": "olli"
+    },
+    {
+      "id": "5B22A2C6_D5DE_4e19_878F_85EB862C4413",
+      "revision": 1,
+      "title": "Elements",
+      "class": {
+        "id": "RC-UML_Package",
+        "revision": 1
+      },
+      "properties": [
+        {
+          "id": "5B22A2C6_D5DE_4e19_878F_85EB862C4413_NAME",
+          "revision": 1,
+          "title": "dcterms:title",
+          "value": [
+            {
+              "text": "Elements",
+              "language": "en-EN"
+            }
+          ],
+          "class": {
+            "id": "PC-Name",
+            "revision": 1
+          },
+          "changedAt": "2019-03-27T21:54:29",
+          "changedBy": "olli"
+        },
+        {
+          "id": "5B22A2C6_D5DE_4e19_878F_85EB862C4413_NOTES",
+          "revision": 1,
+          "title": "dcterms:description",
+          "value": [
+            {
+              "text": "",
+              "language": "en-EN"
+            }
+          ],
+          "class": {
+            "id": "PC-Text",
+            "revision": 1
+          },
+          "changedAt": "2019-03-27T21:54:29",
+          "changedBy": "olli"
+        },
+        {
+          "id": "5B22A2C6_D5DE_4e19_878F_85EB862C4413_STEREOTYPE",
+          "revision": 1,
+          "title": "SpecIF:Stereotype",
+          "value": [
+            {
+              "text": "",
+              "language": "en-EN"
+            }
+          ],
+          "class": {
+            "id": "PC-Stereotype",
+            "revision": 1
+          },
+          "changedAt": "2019-03-27T21:54:29",
+          "changedBy": "olli"
+        },
+        {
+          "id": "{5B22A2C6-D5DE-4e19-878F-85EB862C4413}",
+          "revision": 1,
+          "title": "UML:VisibilityKind",
+          "value": [
+            {
+              "text": "V-UML_VisibilityKind-0",
+              "language": "en-EN"
+            }
+          ],
+          "class": {
+            "id": "PC-UML_VisibilityKind",
+            "revision": 1
+          },
+          "changedAt": "2019-03-27T21:54:29",
+          "changedBy": "olli"
+        }
+      ],
+      "changedAt": "2019-03-27T21:54:29",
+      "changedBy": "olli"
+    },
+    {
+      "id": "65624FBC_FE08_4dad_971E_5D26EF996570",
+      "revision": 1,
+      "title": "Car",
+      "class": {
+        "id": "RC-UML_PassiveElement",
+        "revision": 1
+      },
+      "properties": [
+        {
+          "id": "65624FBC_FE08_4dad_971E_5D26EF996570_NAME",
+          "revision": 1,
+          "title": "dcterms:title",
+          "value": [
+            {
+              "text": "Car",
+              "language": "en-EN"
+            }
+          ],
+          "class": {
+            "id": "PC-Name",
+            "revision": 1
+          },
+          "changedAt": "2019-03-27T21:54:44",
+          "changedBy": "olli"
+        },
+        {
+          "id": "65624FBC_FE08_4dad_971E_5D26EF996570_NOTES",
+          "revision": 1,
+          "title": "dcterms:description",
+          "value": [
+            {
+              "text": "",
+              "language": "en-EN"
+            }
+          ],
+          "class": {
+            "id": "PC-Text",
+            "revision": 1
+          },
+          "changedAt": "2019-03-27T21:54:44",
+          "changedBy": "olli"
+        },
+        {
+          "id": "65624FBC_FE08_4dad_971E_5D26EF996570_STEREOTYPE",
+          "revision": 1,
+          "title": "SpecIF:Stereotype",
+          "value": [
+            {
+              "text": "",
+              "language": "en-EN"
+            }
+          ],
+          "class": {
+            "id": "PC-Stereotype",
+            "revision": 1
+          },
+          "changedAt": "2019-03-27T21:54:44",
+          "changedBy": "olli"
+        },
+        {
+          "id": "65624FBC_FE08_4dad_971E_5D26EF996570_TYPE",
+          "revision": 1,
+          "title": "dcterms:type",
+          "value": [
+            {
+              "text": "OMG:UML:2.5.1:Class",
+              "language": "en-EN"
+            }
+          ],
+          "class": {
+            "id": "PC-Type",
+            "revision": 1
+          },
+          "changedAt": "2019-03-27T21:54:44",
+          "changedBy": "olli"
+        },
+        {
+          "id": "{65624FBC-FE08-4dad-971E-5D26EF996570}",
+          "revision": 1,
+          "title": "UML:VisibilityKind",
+          "value": [
+            {
+              "text": "V-UML_VisibilityKind-0",
+              "language": "en-EN"
+            }
+          ],
+          "class": {
+            "id": "PC-UML_VisibilityKind",
+            "revision": 1
+          },
+          "changedAt": "2019-03-27T21:54:44",
+          "changedBy": "olli"
+        }
+      ],
+      "changedAt": "2019-03-27T21:54:44",
+      "changedBy": "olli"
+    },
+    {
+      "id": "47EF5260_19F5_423d_979F_54B11E09C59A",
+      "revision": 1,
+      "title": "Maximum Speed",
+      "class": {
+        "id": "RC-UML_ActiveElement",
+        "revision": 1
+      },
+      "properties": [
+        {
+          "id": "47EF5260_19F5_423d_979F_54B11E09C59A_NAME",
+          "revision": 1,
+          "title": "dcterms:title",
+          "value": [
+            {
+              "text": "Maximum Speed",
+              "language": "en-EN"
+            }
+          ],
+          "class": {
+            "id": "PC-Name",
+            "revision": 1
+          },
+          "changedAt": "2019-03-27T21:54:44",
+          "changedBy": "olli"
+        },
+        {
+          "id": "47EF5260_19F5_423d_979F_54B11E09C59A_NOTES",
+          "revision": 1,
+          "title": "dcterms:description",
+          "value": [
+            {
+              "text": "",
+              "language": "en-EN"
+            }
+          ],
+          "class": {
+            "id": "PC-Text",
+            "revision": 1
+          },
+          "changedAt": "2019-03-27T21:54:44",
+          "changedBy": "olli"
+        },
+        {
+          "id": "47EF5260_19F5_423d_979F_54B11E09C59A_TYPE",
+          "revision": 1,
+          "title": "dcterms:type",
+          "value": [
+            {
+              "text": "OMG:UML:2.5.1:Attribute",
+              "language": "en-EN"
+            }
+          ],
+          "class": {
+            "id": "PC-Type",
+            "revision": 1
+          },
+          "changedAt": "2019-03-27T21:54:44",
+          "changedBy": "olli"
+        },
+        {
+          "id": "47EF5260_19F5_423d_979F_54B11E09C59A_VALUE",
+          "revision": 1,
+          "title": "rdf:value",
+          "value": [
+            {
+              "text": "15",
+              "language": "en-EN"
+            }
+          ],
+          "class": {
+            "id": "PC-Value",
+            "revision": 1
+          },
+          "changedAt": "2019-03-27T21:54:44",
+          "changedBy": "olli"
+        },
+        {
+          "id": "{47EF5260-19F5-423d-979F-54B11E09C59A}",
+          "revision": 1,
+          "title": "UML:VisibilityKind",
+          "value": [
+            {
+              "text": "V-UML_VisibilityKind-0",
+              "language": "en-EN"
+            }
+          ],
+          "class": {
+            "id": "PC-UML_VisibilityKind",
+            "revision": 1
+          },
+          "changedAt": "2019-03-27T21:54:44",
+          "changedBy": "olli"
+        }
+      ],
+      "changedAt": "2019-03-27T21:54:44",
+      "changedBy": "olli"
+    },
+    {
+      "id": "AA0355D9_3D2D_41f7_AF4F_A1061F76F5C7",
+      "revision": 1,
+      "title": "accelerate",
+      "class": {
+        "id": "RC-UML_ActiveElement",
+        "revision": 1
+      },
+      "properties": [
+        {
+          "id": "AA0355D9_3D2D_41f7_AF4F_A1061F76F5C7_NAME",
+          "revision": 1,
+          "title": "dcterms:title",
+          "value": [
+            {
+              "text": "accelerate",
+              "language": "en-EN"
+            }
+          ],
+          "class": {
+            "id": "PC-Name",
+            "revision": 1
+          },
+          "changedAt": "2019-03-27T21:54:44",
+          "changedBy": "olli"
+        },
+        {
+          "id": "AA0355D9_3D2D_41f7_AF4F_A1061F76F5C7_NOTES",
+          "revision": 1,
+          "title": "dcterms:description",
+          "value": [
+            {
+              "text": "Accelerate the vehicle.",
+              "language": "en-EN"
+            }
+          ],
+          "class": {
+            "id": "PC-Text",
+            "revision": 1
+          },
+          "changedAt": "2019-03-27T21:54:44",
+          "changedBy": "olli"
+        },
+        {
+          "id": "AA0355D9_3D2D_41f7_AF4F_A1061F76F5C7_TYPE",
+          "revision": 1,
+          "title": "dcterms:type",
+          "value": [
+            {
+              "text": "OMG:UML:2.5.1:Operation",
+              "language": "en-EN"
+            }
+          ],
+          "class": {
+            "id": "PC-Type",
+            "revision": 1
+          },
+          "changedAt": "2019-03-27T21:54:44",
+          "changedBy": "olli"
+        },
+        {
+          "id": "AA0355D9_3D2D_41f7_AF4F_A1061F76F5C7_STEREOTYPE",
+          "revision": 1,
+          "title": "SpecIF:Stereotype",
+          "value": [
+            {
+              "text": ":",
+              "language": "en-EN"
+            }
+          ],
+          "class": {
+            "id": "PC-Stereotype",
+            "revision": 1
+          },
+          "changedAt": "2019-03-27T21:54:44",
+          "changedBy": "olli"
+        },
+        {
+          "id": "{AA0355D9-3D2D-41f7-AF4F-A1061F76F5C7}",
+          "revision": 1,
+          "title": "UML:VisibilityKind",
+          "value": [
+            {
+              "text": "V-UML_VisibilityKind-0",
+              "language": "en-EN"
+            }
+          ],
+          "class": {
+            "id": "PC-UML_VisibilityKind",
+            "revision": 1
+          },
+          "changedAt": "2019-03-27T21:54:44",
+          "changedBy": "olli"
+        }
+      ],
+      "changedAt": "2019-03-27T21:54:44",
+      "changedBy": "olli"
+    },
+    {
+      "id": "E64C5208_A8DF_45a5_B022_85C853722664",
+      "revision": 1,
+      "title": "Vehicle",
+      "class": {
+        "id": "RC-UML_PassiveElement",
+        "revision": 1
+      },
+      "properties": [
+        {
+          "id": "E64C5208_A8DF_45a5_B022_85C853722664_NAME",
+          "revision": 1,
+          "title": "dcterms:title",
+          "value": [
+            {
+              "text": "Vehicle",
+              "language": "en-EN"
+            }
+          ],
+          "class": {
+            "id": "PC-Name",
+            "revision": 1
+          },
+          "changedAt": "2019-03-27T21:54:44",
+          "changedBy": "olli"
+        },
+        {
+          "id": "E64C5208_A8DF_45a5_B022_85C853722664_NOTES",
+          "revision": 1,
+          "title": "dcterms:description",
+          "value": [
+            {
+              "text": "",
+              "language": "en-EN"
+            }
+          ],
+          "class": {
+            "id": "PC-Text",
+            "revision": 1
+          },
+          "changedAt": "2019-03-27T21:54:44",
+          "changedBy": "olli"
+        },
+        {
+          "id": "E64C5208_A8DF_45a5_B022_85C853722664_STEREOTYPE",
+          "revision": 1,
+          "title": "SpecIF:Stereotype",
+          "value": [
+            {
+              "text": "",
+              "language": "en-EN"
+            }
+          ],
+          "class": {
+            "id": "PC-Stereotype",
+            "revision": 1
+          },
+          "changedAt": "2019-03-27T21:54:44",
+          "changedBy": "olli"
+        },
+        {
+          "id": "E64C5208_A8DF_45a5_B022_85C853722664_TYPE",
+          "revision": 1,
+          "title": "dcterms:type",
+          "value": [
+            {
+              "text": "OMG:UML:2.5.1:Class",
+              "language": "en-EN"
+            }
+          ],
+          "class": {
+            "id": "PC-Type",
+            "revision": 1
+          },
+          "changedAt": "2019-03-27T21:54:44",
+          "changedBy": "olli"
+        },
+        {
+          "id": "{E64C5208-A8DF-45a5-B022-85C853722664}",
+          "revision": 1,
+          "title": "UML:VisibilityKind",
+          "value": [
+            {
+              "text": "V-UML_VisibilityKind-0",
+              "language": "en-EN"
+            }
+          ],
+          "class": {
+            "id": "PC-UML_VisibilityKind",
+            "revision": 1
+          },
+          "changedAt": "2019-03-27T21:54:44",
+          "changedBy": "olli"
+        }
+      ],
+      "changedAt": "2019-03-27T21:54:44",
+      "changedBy": "olli"
+    }
+  ],
+  "statements": [
+    {
+      "id": "_02f187a5_7e9a_4216_82df_883044c3796e",
+      "revision": 1,
+      "title": "SpecIF:contains",
+      "class": {
+        "id": "SC-contains",
+        "revision": 1
+      },
+      "subject": {
+        "id": "45A143E0_D43A_4f51_ACA6_FF695EEE3256",
+        "revision": 1
+      },
+      "object": {
+        "id": "E5BE02CD_7270_4d3a_BBBA_B4D9CE542A7E",
+        "revision": 1
+      },
+      "changedAt": "2019-04-04T22:54:32.6465461+02:00"
+    },
+    {
+      "id": "_71813b08_8b7a_4cd7_bcbb_af37861d0138",
+      "revision": 1,
+      "title": "SpecIF:contains",
+      "class": {
+        "id": "SC-contains",
+        "revision": 1
+      },
+      "subject": {
+        "id": "E5BE02CD_7270_4d3a_BBBA_B4D9CE542A7E",
+        "revision": 1
+      },
+      "object": {
+        "id": "BF30DD09_E13E_451b_B210_786F93A74936",
+        "revision": 1
+      },
+      "changedAt": "2019-04-04T22:54:32.8605481+02:00"
+    },
+    {
+      "id": "_c1aa75a2_4661_46db_9bbd_2aec6680de45",
+      "revision": 1,
+      "title": "SpecIF:contains",
+      "class": {
+        "id": "SC-contains",
+        "revision": 1
+      },
+      "subject": {
+        "id": "E5BE02CD_7270_4d3a_BBBA_B4D9CE542A7E",
+        "revision": 1
+      },
+      "object": {
+        "id": "78AB624B_521C_4c07_B11D_82354B8A5BB2",
+        "revision": 1
+      },
+      "changedAt": "2019-04-04T22:54:33.6875427+02:00"
+    },
+    {
+      "id": "_30836838_a96b_4632_aeb8_097e07c9e677",
+      "revision": 1,
+      "title": "SpecIF:contains",
+      "class": {
+        "id": "SC-contains",
+        "revision": 1
+      },
+      "subject": {
+        "id": "78AB624B_521C_4c07_B11D_82354B8A5BB2",
+        "revision": 1
+      },
+      "object": {
+        "id": "DFE23489_5962_5859_B375_9AA62757FD18",
+        "revision": 1
+      },
+      "changedAt": "2019-04-04T22:54:33.8745421+02:00"
+    },
+    {
+      "id": "_638da4c1_b095_4503_b667_cc84ec4b15e3",
+      "revision": 1,
+      "title": "SpecIF:contains",
+      "class": {
+        "id": "SC-contains",
+        "revision": 1
+      },
+      "subject": {
+        "id": "78AB624B_521C_4c07_B11D_82354B8A5BB2",
+        "revision": 1
+      },
+      "object": {
+        "id": "0041AD82_095B_1109_8B25_4A31B2420F57",
+        "revision": 1
+      },
+      "changedAt": "2019-04-04T22:54:33.8745421+02:00"
+    },
+    {
+      "id": "_a8f3e6d3_f917_4c3c_8b1b_5e715df94ac8",
+      "revision": 1,
+      "title": "rdf:type",
+      "class": {
+        "id": "SC-Classifier",
+        "revision": 1
+      },
+      "subject": {
+        "id": "78AB624B_521C_4c07_B11D_82354B8A5BB2",
+        "revision": 1
+      },
+      "object": {
+        "id": "65624FBC_FE08_4dad_971E_5D26EF996570",
+        "revision": 1
+      },
+      "changedAt": "2019-04-04T22:54:33.9845423+02:00"
+    },
+    {
+      "id": "_f15ef43e_c758_4feb_9151_bfb2d22a1ac5",
+      "revision": 1,
+      "title": "SpecIF:contains",
+      "class": {
+        "id": "SC-contains",
+        "revision": 1
+      },
+      "subject": {
+        "id": "45A143E0_D43A_4f51_ACA6_FF695EEE3256",
+        "revision": 1
+      },
+      "object": {
+        "id": "5B22A2C6_D5DE_4e19_878F_85EB862C4413",
+        "revision": 1
+      },
+      "changedAt": "2019-04-04T22:54:34.0085419+02:00"
+    },
+    {
+      "id": "_368810e7_e81e_4129_ad64_4b9e0e77df67",
+      "revision": 1,
+      "title": "SpecIF:contains",
+      "class": {
+        "id": "SC-contains",
+        "revision": 1
+      },
+      "subject": {
+        "id": "5B22A2C6_D5DE_4e19_878F_85EB862C4413",
+        "revision": 1
+      },
+      "object": {
+        "id": "65624FBC_FE08_4dad_971E_5D26EF996570",
+        "revision": 1
+      },
+      "changedAt": "2019-04-04T22:54:34.1475481+02:00"
+    },
+    {
+      "id": "C9232C0C_37CB_4d01_8D7D_DB0D0DA02004",
+      "revision": 1,
+      "title": "UML:Relationship",
+      "class": {
+        "id": "SC-UML_Relationship",
+        "revision": 0
+      },
+      "subject": {
+        "id": "65624FBC_FE08_4dad_971E_5D26EF996570",
+        "revision": 1
+      },
+      "object": {
+        "id": "E64C5208_A8DF_45a5_B022_85C853722664",
+        "revision": 1
+      },
+      "properties": [
+        {
+          "id": "C9232C0C_37CB_4d01_8D7D_DB0D0DA02004_NAME",
+          "revision": 1,
+          "title": "dcterms:title",
+          "value": [
+            {
+              "text": "",
+              "language": "en-EN"
+            }
+          ],
+          "class": {
+            "id": "PC-Name",
+            "revision": 1
+          },
+          "changedAt": "2019-04-04T22:54:34.4165488+02:00"
+        },
+        {
+          "id": "C9232C0C_37CB_4d01_8D7D_DB0D0DA02004_NOTES",
+          "revision": 1,
+          "title": "dcterms:description",
+          "value": [
+            {
+              "text": "",
+              "language": "en-EN"
+            }
+          ],
+          "class": {
+            "id": "PC-Text",
+            "revision": 1
+          },
+          "changedAt": "2019-04-04T22:54:34.4165488+02:00"
+        },
+        {
+          "id": "C9232C0C_37CB_4d01_8D7D_DB0D0DA02004_TYPE",
+          "revision": 1,
+          "title": "dcterms:type",
+          "value": [
+            {
+              "text": "OMG:UML:2.5.1:Generalization",
+              "language": "en-EN"
+            }
+          ],
+          "class": {
+            "id": "PC-Type",
+            "revision": 1
+          },
+          "changedAt": "2019-04-04T22:54:34.4175477+02:00"
+        },
+        {
+          "id": "C9232C0C_37CB_4d01_8D7D_DB0D0DA02004_DIRECTION",
+          "revision": 1,
+          "title": "UML:ConnectorDirection",
+          "value": [
+            {
+              "text": "V-UML_ConnectorDirection-1",
+              "language": "en-EN"
+            }
+          ],
+          "class": {
+            "id": "PC-UML_ConnectorDirection",
+            "revision": 1
+          },
+          "changedAt": "2019-04-04T22:54:34.4175477+02:00"
+        },
+        {
+          "id": "C9232C0C_37CB_4d01_8D7D_DB0D0DA02004_SOURCE_ROLE",
+          "revision": 1,
+          "title": "UML:ConnectorSourceRole",
+          "value": [
+            {
+              "text": "",
+              "language": "en-EN"
+            }
+          ],
+          "class": {
+            "id": "PC-UML_ConnectorSourceRole",
+            "revision": 1
+          },
+          "changedAt": "2019-04-04T22:54:34.4185487+02:00"
+        },
+        {
+          "id": "C9232C0C_37CB_4d01_8D7D_DB0D0DA02004_TARGET_ROLE",
+          "revision": 1,
+          "title": "UML:ConnectorTargetRole",
+          "value": [
+            {
+              "text": "",
+              "language": "en-EN"
+            }
+          ],
+          "class": {
+            "id": "PC-UML_ConnectorTargetRole",
+            "revision": 1
+          },
+          "changedAt": "2019-04-04T22:54:34.4285449+02:00"
+        },
+        {
+          "id": "C9232C0C_37CB_4d01_8D7D_DB0D0DA02004_SOURCE_MULTIPLICITY",
+          "revision": 1,
+          "title": "UML:ConnectorSourceMultiplicity",
+          "value": [
+            {
+              "text": "",
+              "language": "en-EN"
+            }
+          ],
+          "class": {
+            "id": "PC-UML_ConnectorSourceMultipilcity",
+            "revision": 1
+          },
+          "changedAt": "2019-04-04T22:54:34.4335457+02:00"
+        },
+        {
+          "id": "C9232C0C_37CB_4d01_8D7D_DB0D0DA02004_TARGET_MULTIPLICITY",
+          "revision": 1,
+          "title": "UML:ConnectorTargetMultiplicity",
+          "value": [
+            {
+              "text": "",
+              "language": "en-EN"
+            }
+          ],
+          "class": {
+            "id": "PC-UML_ConnectorTargetMultipilcity",
+            "revision": 1
+          },
+          "changedAt": "2019-04-04T22:54:34.4345474+02:00"
+        }
+      ],
+      "changedAt": "2019-04-04T22:54:34.4165488+02:00"
+    },
+    {
+      "id": "_002ab4f6_b4a3_4894_9fa7_7ddb7d7790a3",
+      "revision": 1,
+      "title": "SpecIF:contains",
+      "class": {
+        "id": "SC-contains",
+        "revision": 1
+      },
+      "subject": {
+        "id": "5B22A2C6_D5DE_4e19_878F_85EB862C4413",
+        "revision": 1
+      },
+      "object": {
+        "id": "E64C5208_A8DF_45a5_B022_85C853722664",
+        "revision": 1
+      },
+      "changedAt": "2019-04-04T22:54:34.4345474+02:00"
+    },
+    {
+      "id": "_ac065157_4ca4_4f5c_a943_c7a18a1533cf",
+      "revision": 1,
+      "title": "SpecIF:contains",
+      "class": {
+        "id": "SC-contains",
+        "revision": 0
+      },
+      "subject": {
+        "id": "E64C5208_A8DF_45a5_B022_85C853722664",
+        "revision": 1
+      },
+      "object": {
+        "id": "47EF5260_19F5_423d_979F_54B11E09C59A",
+        "revision": 1
+      },
+      "changedAt": "2019-04-04T22:54:34.6375495+02:00"
+    },
+    {
+      "id": "_bdfa9159_ad31_4352_a640_6b9c8165f6c7",
+      "revision": 1,
+      "title": "SpecIF:contains",
+      "class": {
+        "id": "SC-contains",
+        "revision": 0
+      },
+      "subject": {
+        "id": "E64C5208_A8DF_45a5_B022_85C853722664",
+        "revision": 1
+      },
+      "object": {
+        "id": "AA0355D9_3D2D_41f7_AF4F_A1061F76F5C7",
+        "revision": 1
+      },
+      "changedAt": "2019-04-04T22:54:34.6555494+02:00"
+    }
+  ],
+  "hierarchies": [
+    {
+      "id": "_4002bd3e_1f06_4655_9a2d_ffcc607c2b44",
+      "revision": 1,
+      "resource": {
+        "id": "45A143E0_D43A_4f51_ACA6_FF695EEE3256",
+        "revision": 1
+      },
+      "nodes": [
+        {
+          "id": "_a9735c38_6ccb_4efc_820b_444d67cbd879",
+          "revision": 1,
+          "resource": {
+            "id": "E5BE02CD_7270_4d3a_BBBA_B4D9CE542A7E",
+            "revision": 1
+          },
+          "nodes": [
+            {
+              "id": "_7e41bc58_82ce_4f4d_97b0_5c4c1593439d",
+              "revision": 1,
+              "resource": {
+                "id": "BF30DD09_E13E_451b_B210_786F93A74936",
+                "revision": 1
+              },
+              "nodes": [],
+              "changedAt": "2019-04-04T22:54:31.68554+02:00"
+            },
+            {
+              "id": "_8c848eb8_320c_4eda_91d5_cedffe8995db",
+              "revision": 1,
+              "resource": {
+                "id": "78AB624B_521C_4c07_B11D_82354B8A5BB2",
+                "revision": 1
+              },
+              "nodes": [],
+              "changedAt": "2019-04-04T22:54:31.7625413+02:00"
+            }
+          ],
+          "changedAt": "2019-04-04T22:54:31.6385396+02:00"
+        },
+        {
+          "id": "_dd2a6901_6562_4f79_aece_b91d9dc615c5",
+          "revision": 1,
+          "resource": {
+            "id": "5B22A2C6_D5DE_4e19_878F_85EB862C4413",
+            "revision": 1
+          },
+          "nodes": [
+            {
+              "id": "_17e10862_55be_4f74_b9c7_7e7cd837f2d5",
+              "revision": 1,
+              "resource": {
+                "id": "65624FBC_FE08_4dad_971E_5D26EF996570",
+                "revision": 1
+              },
+              "nodes": [],
+              "changedAt": "2019-04-04T22:54:31.9755403+02:00"
+            },
+            {
+              "id": "_8e3cac08_025f_4924_a438_4b9b0c5f275e",
+              "revision": 1,
+              "resource": {
+                "id": "E64C5208_A8DF_45a5_B022_85C853722664",
+                "revision": 1
+              },
+              "nodes": [],
+              "changedAt": "2019-04-04T22:54:32.0625404+02:00"
+            }
+          ],
+          "changedAt": "2019-04-04T22:54:31.8855467+02:00"
+        }
+      ],
+      "changedAt": "2019-04-04T22:54:31.5145407+02:00"
+    }
+  ],
+  "files": []
+}

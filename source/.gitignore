@@ -1,0 +1,16 @@
+﻿node_modules/
+.node_modules/
+built/*
+**/*.js.map
+scripts/typings/
+coverage/
+internal/
+**/.DS_Store
+.settings
+**/.vs
+**/.vscode
+!**/.vscode/tasks.json
+package-lock.json
+obj/**/*
+bin/
+**/*.csproj.user

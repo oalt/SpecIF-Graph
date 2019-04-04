@@ -1,0 +1,12 @@
+{
+  "requires": true,
+  "lockfileVersion": 1,
+  "dependencies": {
+    "@types/jquery": "^3.3.29",
+    "@types/requirejs": "^2.1.31",
+    "@types/vis": "^4.21.12",
+    "jquery": "^3.3.1",
+    "requirejs": "^2.3.6",
+    "vis": "^4.21.0"
+  }
+}
