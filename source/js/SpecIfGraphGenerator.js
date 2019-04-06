@@ -564,4 +564,4 @@ var SpecIfGraphGenerator = /** @class */ (function () {
     };
     return SpecIfGraphGenerator;
 }());
-//# sourceMappingURL=graph.js.map
+//# sourceMappingURL=SpecIfGraphGenerator.js.map

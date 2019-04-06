@@ -62,15 +62,14 @@
     <Folder Include="Properties\" />
   </ItemGroup>
   <ItemGroup>
-    <TypeScriptCompile Include="ts\graph-main.ts" />
-    <TypeScriptCompile Include="ts\graph.ts" />
+    <TypeScriptCompile Include="ts\Application.ts" />
+    <TypeScriptCompile Include="ts\SpecIfGraphGenerator.ts" />
   </ItemGroup>
   <ItemGroup>
     <Content Include=".gitignore" />
     <Content Include="demo.html" />
+    <Content Include="js\Application.js" />
     <Content Include="js\config.js" />
-    <Content Include="js\graph-main.js" />
-    <Content Include="js\graph.js" />
     <Content Include="js\specIFData.js" />
   </ItemGroup>
   <ItemGroup>
@@ -78,6 +77,7 @@
     <Content Include="js\graph.js.map" />
   </ItemGroup>
   <ItemGroup>
+    <Content Include="js\SpecIfGraphGenerator.js" />
     <Content Include="package.json" />
   </ItemGroup>
   <ItemGroup>

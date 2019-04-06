@@ -2,7 +2,7 @@
  * Created by Marcus Bätz on 13.04.2017.
  * Ported to TypeScript by Dr. Oliver Alt
  */
-/// <reference path="graph.ts" />
+/// <reference path="SpecIfGraphGenerator.ts" />
 var Application = /** @class */ (function () {
     function Application() {
         Application.graph = new SpecIfGraphGenerator();
@@ -68,4 +68,4 @@ var Application = /** @class */ (function () {
 }());
 //console.debug("Application start.");
 var app = new Application();
-//# sourceMappingURL=graph-main.js.map
+//# sourceMappingURL=Application.js.map

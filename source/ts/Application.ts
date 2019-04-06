@@ -2,7 +2,7 @@
  * Created by Marcus Bätz on 13.04.2017.
  * Ported to TypeScript by Dr. Oliver Alt
  */
-/// <reference path="graph.ts" />
+/// <reference path="SpecIfGraphGenerator.ts" />
 
 class Application {
 
