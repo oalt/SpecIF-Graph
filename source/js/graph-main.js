@@ -1,11 +1,11 @@
 /**
  * Created by Marcus Bätz on 13.04.2017.
+ * Ported to TypeScript by Dr. Oliver Alt
  */
-require(["config"], function () {
-    require(["graph", "jquery"], function (graph, $) {
-        ////////////////////////////////////////////////////
-        //Mit Slider, der slider erhält eine range zwischen dem kleinsten Index und dem größten Index
-        //Mann kann hier schnell durch alle Indizes durch wechseln
+/// <reference path="graph.ts" />
+var Application = /** @class */ (function () {
+    function Application() {
+        Application.graph = new SpecIfGraphGenerator();
         var specIFData = (function () {
             var json = null;
             $.ajax({
@@ -36,34 +36,36 @@ require(["config"], function () {
                     options.index = evt.target.index;
                 }
                 else {
-                    if (evt.target.resource && (typeof evt.target.resource == 'string'))
-                        options.index = indexById(specif.resources, evt.target.resource);
+                    if (evt.target.resource && (typeof evt.target.resource == 'string')) {
+                        options.index = this.indexById(specif.resources, evt.target.resource);
+                    }
                 }
-                ;
-                graph.init(specif, options);
+                this.graph.init(specif, options);
             }
         };
         $("#label").text("Index: " + options.index);
-        graph.init(specif, options);
+        Application.graph.init(specif, options);
         slider.attr("max", max);
-        slider;
         $(document).on('input', '#slider', function () {
             options.index = slider.val();
             $("#label").text("Index: " + options.index);
-            graph.init(specif, options);
+            Application.graph.init(specif, options);
         });
-        ////////////////////////////////////////////////////////////////
-        //Ohne Slider, hier einfach den Index der Ressource angeben
-        //		let specif = specIFData;
-        //		graph.init(specif,15);
-        function indexById(L, id) {
-            for (var i = L.length - 1; i > -1; i--) {
-                if (L[i].id === id) {
-                    return i;
-                }
+    }
+    ////////////////////////////////////////////////////////////////
+    //Ohne Slider, hier einfach den Index der Ressource angeben
+    //let specif = specIFData;
+    //graph.init(specif,15);
+    Application.prototype.indexById = function (L, id) {
+        for (var i = L.length - 1; i > -1; i--) {
+            if (L[i].id === id) {
+                return i;
             }
-            return -1;
         }
-    });
-});
+        return -1;
+    };
+    return Application;
+}());
+//console.debug("Application start.");
+var app = new Application();
 //# sourceMappingURL=graph-main.js.map
