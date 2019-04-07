@@ -5,7 +5,8 @@
 /// <reference path="SpecIfGraphGenerator.ts" />
 var Application = /** @class */ (function () {
     function Application() {
-        Application.graph = new SpecIfGraphGenerator();
+        var _this = this;
+        this.graphGenerator = new SpecIfGraphGenerator();
         var specIFData = (function () {
             var json = null;
             $.ajax({
@@ -19,12 +20,27 @@ var Application = /** @class */ (function () {
             });
             return json;
         })();
+        var specif = specIFData;
+        var selectedIndex = 0;
+        ////////////////////////////////////////////////////
+        //Mit Slider, der slider erhält eine range zwischen dem kleinsten Index und dem größten Index
+        //Mann kann hier schnell durch alle Indizes durch wechseln
         var max = specIFData.resources.length - 1;
         var slider = $("#slider");
-        var specif = specIFData;
+        selectedIndex = slider.val();
+        $("#label").text("Index: " + selectedIndex);
+        slider.attr("max", max);
+        $(document).on('input', '#slider', function () {
+            options.index = slider.val();
+            $("#label").text("Index: " + options.index);
+            _this.graphGenerator.init(specif, options);
+        });
+        ////////////////////////////////////////////////////////////////
+        //Ohne Slider, hier einfach den Index der Ressource angeben
+        //selectedIndex = 17;
         var options = {
             canvas: 'specifGraph',
-            index: slider.val(),
+            index: selectedIndex,
             /**
              * holds a set of common specIF title properties
              * @type {Array}
@@ -37,25 +53,14 @@ var Application = /** @class */ (function () {
                 }
                 else {
                     if (evt.target.resource && (typeof evt.target.resource == 'string')) {
-                        options.index = this.indexById(specif.resources, evt.target.resource);
+                        options.index = _this.indexById(specif.resources, evt.target.resource);
                     }
                 }
-                this.graph.init(specif, options);
+                _this.graphGenerator.init(specif, options);
             }
         };
-        $("#label").text("Index: " + options.index);
-        Application.graph.init(specif, options);
-        slider.attr("max", max);
-        $(document).on('input', '#slider', function () {
-            options.index = slider.val();
-            $("#label").text("Index: " + options.index);
-            Application.graph.init(specif, options);
-        });
+        this.graphGenerator.init(specif, options);
     }
-    ////////////////////////////////////////////////////////////////
-    //Ohne Slider, hier einfach den Index der Ressource angeben
-    //let specif = specIFData;
-    //graph.init(specif,15);
     Application.prototype.indexById = function (L, id) {
         for (var i = L.length - 1; i > -1; i--) {
             if (L[i].id === id) {

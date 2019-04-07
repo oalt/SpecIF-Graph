@@ -4,13 +4,12 @@
  * Accepts data-sets according to v0.10.4 or v0.11.2 and later.
  * Ported to TypeScript by Dr. Oliver Alt
  */
-var SpecIfGraphGenerator = /** @class */ (function () {
+var SpecIfGraphGenerator = (function () {
     function SpecIfGraphGenerator() {
         this.nodesData = [];
         this.edgeData = [];
     }
     SpecIfGraphGenerator.prototype.init = function (specifData, opts) {
-        var _this = this;
         this.specifData = specifData;
         this.opts = opts;
         //console.debug('init input',specifData,opts);
@@ -93,7 +92,7 @@ var SpecIfGraphGenerator = /** @class */ (function () {
             var connectedNode = _a[_i];
             var neighbours = network.getConnectedNodes(connectedNode);
             if (neighbours.length > 5) {
-                this.closeCluster(connectedNode, network, opts.clusterColor);
+                this.closeCluster(connectedNode, network);
             }
         }
         network.on("doubleClick", function (prms) {
@@ -101,23 +100,24 @@ var SpecIfGraphGenerator = /** @class */ (function () {
             if (prms.nodes.length === 1) {
                 if (prms.nodes[0] === 0)
                     return; // no action for the node in focus
-                if (!_this.isIE() &&
+                if (!isIE() &&
                     (typeof (opts.onDoubleClick) === "function") &&
                     network.getConnectedNodes(prms.nodes[0]).length === 1 &&
-                    !network.isCluster(prms.nodes[0])) {
+                    !network.clustering.isCluster(prms.nodes[0])) {
                     // it is a peripheral node with a single edge,
                     // extract the node-id from 'n:m=id':
                     var nId = prms.nodes[0].match(/.+=([\S]+)/)[1];
                     opts.onDoubleClick({ target: { resource: nId, statement: prms.edges[0] } });
                     return;
                 }
+                ;
                 if (typeof (prms.nodes[0]) === "string" && prms.nodes[0].includes(":")) {
-                    if (!network.isCluster(prms.nodes[0])) {
+                    if (!network.clustering.isCluster(prms.nodes[0]))
                         return;
-                    }
                 }
+                ;
                 // else, open or close the cluster depending in its state:
-                if (network.isCluster(prms.nodes[0])) {
+                if (network.clustering.isCluster(prms.nodes[0])) {
                     var releaseOptions = {
                         releaseFunction: function (clusterPosition, containedNodesPositions) {
                             var newPositions = {};
@@ -130,36 +130,53 @@ var SpecIfGraphGenerator = /** @class */ (function () {
                                         newPositions[id] = { x: clusterPosition.x, y: clusterPosition.y };
                                         if (id !== "0") {
                                             offset = Math.atan(clusterPosition.y / clusterPosition.x);
-                                            if (clusterPosition.x < 0) {
+                                            if (clusterPosition.x < 0)
                                                 offset += Math.PI;
-                                            }
                                             dist = 160;
                                         }
                                     }
                                     else {
-                                        //console.debug("in else");
-                                        //newPositions[id] = this.calculateNodePosition(
-                                        //	i,
-                                        //	Math.sqrt(2) * Math.PI,
-                                        //	length,
-                                        //	clusterPosition,
-                                        //	dist,
-                                        //	offset);
+                                        newPositions[id] = this.calculateNodePosition(i, Math.sqrt(2) * Math.PI, length, clusterPosition, dist, offset);
                                         i++;
                                     }
                                 }
-                            } // for
+                            }
+                            ;
                             return newPositions;
                         }
                     };
-                    network.openCluster(prms.nodes[0], releaseOptions);
+                    network.clustering.openCluster(prms.nodes[0], releaseOptions);
                 }
                 else {
-                    _this.closeCluster(prms.nodes[0], network, opts.clusterColor);
+                    this.closeCluster(prms.nodes[0], network);
                 }
             }
         });
     }; // we're done ...
+    /**
+     * This function closes a given cluster
+     * @param node A node that is a cluster
+     * @param network the network the node is part of
+     */
+    SpecIfGraphGenerator.prototype.closeCluster = function (node, network) {
+        if (node === 0) {
+            for (var _i = 0, _a = network.getConnectedNodes("0"); _i < _a.length; _i++) {
+                var connectedNode = _a[_i];
+                this.closeCluster(connectedNode, network);
+            }
+        }
+        var options = {
+            joinCondition: function (nodeOptions, childNode) {
+                return childNode.id !== 0;
+            },
+            clusterNodeProperties: {
+                label: "",
+                color: this.opts.clusterColor,
+                shape: "diamond"
+            }
+        };
+        network.clustering.clusterByConnection(node, options);
+    };
     /**
      * wraps a text after e specific number of chars
      * @param str The String that hast to be wrapped
@@ -172,7 +189,7 @@ var SpecIfGraphGenerator = /** @class */ (function () {
         var words = str.match(/[^-\s]+[-\s]{0,}/g), // don't like '*/', even if it is correct and working 
         newLine = '\n', lineLength = 0, part = '', out = '';
         // simple algorithm working quite nicely with words < maxLen/2.
-        for (var i = 0; i < words.length; i++) { // re-evaluate words.length every time, as it may grow while looping
+        for (var i = 0; i < words.length; i++) {
             // hyphenate 'long' words:
             if (words[i].length > maxLen) {
                 part = words[i].slice(Math.round(words[i].length / 2));
@@ -223,7 +240,7 @@ var SpecIfGraphGenerator = /** @class */ (function () {
         pos.x = parentPos.x + r * Math.cos(alpha);
         pos.y = parentPos.y + r * Math.sin(alpha);
         pos.alpha = alpha;
-        console.debug('calculateNodePosition', i, alpha);
+        //			console.debug('calculateNodePosition',i,alpha)
         return pos;
     };
     /**
@@ -376,7 +393,7 @@ var SpecIfGraphGenerator = /** @class */ (function () {
             }
         }
         if (result === "") {
-            result = "[" + resource.class.id + "]";
+            result = "[" + resource["class"].id + "]";
         }
         return result;
     };
@@ -535,39 +552,14 @@ var SpecIfGraphGenerator = /** @class */ (function () {
         }
         return stms;
     };
-    /**
-     * This function closes a given cluster
-     * @param node A node that is a cluster
-     * @param network the network the node is part of
-     */
-    SpecIfGraphGenerator.prototype.closeCluster = function (node, network, clusterColor) {
-        if (node === 0) {
-            for (var _i = 0, _a = network.getConnectedNodes("0"); _i < _a.length; _i++) {
-                var connectedNode = _a[_i];
-                this.closeCluster(connectedNode, network, clusterColor);
-            }
-        }
-        var options = {
-            joinCondition: function (nodeOptions, childNode) {
-                return childNode.id !== 0;
-            },
-            clusterNodeProperties: {
-                label: "",
-                color: clusterColor,
-                shape: "diamond"
-            }
-        };
-        network.clustering.clusterByConnection(node, options);
-    };
-    /**
-     * Checks if the ie 11 or lower is used
-     * @returns {boolean} true if ie es 11 or lower else false
-     */
-    SpecIfGraphGenerator.prototype.isIE = function () {
-        var ua = window.navigator.userAgent;
-        var msie = ua.indexOf("MSIE ");
-        return msie > 0 || !!navigator.userAgent.match(/Trident.*rv\:11\./);
-    };
     return SpecIfGraphGenerator;
 }());
-//# sourceMappingURL=SpecIfGraphGenerator.js.map
+/**
+ * Checks if the ie 11 or lower is used
+ * @returns {boolean} true if ie es 11 or lower else false
+ */
+function isIE() {
+    var ua = window.navigator.userAgent;
+    var msie = ua.indexOf("MSIE ");
+    return msie > 0 || !!navigator.userAgent.match(/Trident.*rv\:11\./);
+}
